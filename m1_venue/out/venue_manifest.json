@@ -1,0 +1,2522 @@
+{
+ "manifest_version": "0.1",
+ "status": "provisional",
+ "built_at": "2026-11-24T23:43:32+08:00",
+ "venue": "Kai Tak Main Stadium",
+ "scope": {
+  "side": "W",
+  "angle_range_deg": [
+   88.0,
+   270.5
+  ],
+  "gates": [
+   "F",
+   "E",
+   "D",
+   "C"
+  ],
+  "levels": [
+   "L0",
+   "L2"
+  ],
+  "capacity": 9899
+ },
+ "source": {
+  "source_blend": "Kai_Tak_Peak_Routes.blend",
+  "source_sha256": "3d59faf2714e873dfddec1bcbe349cf11073377256b6e4460e3d87fba9d470fd",
+  "source_scene": "01 | 启德主场馆",
+  "blender_version": "5.2.2 LTS",
+  "model_status": "Photo-referenced architectural study. Interior layouts, stage, landscape, harbour backdrop and sign placement are interpretive. No surveyed indoor or emergency circulation model.",
+  "provenance": "OSM context + georeferenced textured HK assets + procedural assets + verified cached TRELLIS landmark; conceptual event layout, no Qwen run."
+ },
+ "frame": {
+  "origin_E": 838186.926,
+  "origin_N": 820553.488,
+  "source": "fit of Blender building footprints to OSM, median 1 mm (origin_fit.json, recommended_origin)",
+  "units": "metres",
+  "axes": "x east, y north, z up",
+  "bowl_centre": [
+   191.22,
+   -195.84
+  ],
+  "glb_axes": "glTF +Y up: x = x, y = z, z = -y"
+ },
+ "levels": {
+  "L0": {
+   "z": 2.0,
+   "label": "Pitch level (concert floor)"
+  },
+  "L2": {
+   "z": 12.2,
+   "label": "Main concourse and lower tier"
+  }
+ },
+ "assumed": {
+  "concourse_width_m": {
+   "value": 17.0,
+   "source": "width of the 'East concourse' interior set in the .blend (17 x 55 m)"
+  },
+  "concourse_inset_m": {
+   "value": 0.5,
+   "source": "assumed facade thickness"
+  },
+  "portal_width_m": {
+   "value": 3.0,
+   "source": "assumed; no vomitories in the .blend"
+  },
+  "gate_width_m": {
+   "value": 8.0,
+   "source": "assumed; OSM gives gate points only"
+  },
+  "gate_depth_m": {
+   "value": 12.0,
+   "source": "assumed gate forecourt depth"
+  },
+  "gate_flow_share": {
+   "value": 0.4,
+   "source": "assumed share of the gate width that passes people (doors, barriers, stewards)"
+  },
+  "specific_flow_pps_per_m": {
+   "value": 1.3,
+   "source": "design flow per metre of clear width (SFPE handbook order of magnitude; to cite)"
+  },
+  "jam_density_ppm2": {
+   "value": 4.0,
+   "source": "assumed density at which a zone accepts nobody"
+  },
+  "tunnel_width_m": {
+   "value": 5.0,
+   "source": "assumed; no pitch tunnels in the .blend"
+  },
+  "tunnel_angles_deg": {
+   "value": [
+    128.0,
+    232.0
+   ],
+   "source": "assumed, at the bowl corners"
+  },
+  "stage_side": {
+   "value": "north",
+   "source": ".blend stage deck at y -160..-137 (roadmap text says south; to confirm)"
+  }
+ },
+ "id_rule": "<level>-<side>-<kind><nn>: S seating, P portal, C concourse cell, G-<letter> gate, F floor, T tunnel, CL line, D display",
+ "files": {
+  "mesh": "venue_lite.glb",
+  "seats": "seats.bin",
+  "zones": "zones.geojson",
+  "lines": "lines.geojson",
+  "displays": "displays.geojson",
+  "graph": "graph.json",
+  "walkable": "walkable.geojson",
+  "spawn": "spawn.json"
+ },
+ "zones": {
+  "L2-W-C01": {
+   "id": "L2-W-C01",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    88.25,
+    103.29
+   ],
+   "area_m2": 577.0,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C02",
+    "L2-W-P01"
+   ],
+   "dist_to_nearest_gate_m": 88.2,
+   "centroid": [
+    178.24,
+    -67.61,
+    12.2
+   ],
+   "centroid_hk80": [
+    838365.17,
+    820485.88
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C02": {
+   "id": "L2-W-C02",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    103.29,
+    118.33
+   ],
+   "area_m2": 574.5,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C01",
+    "L2-W-C03",
+    "L2-W-P02",
+    "L2-W-P03"
+   ],
+   "dist_to_nearest_gate_m": 54.5,
+   "centroid": [
+    145.6,
+    -75.79,
+    12.2
+   ],
+   "centroid_hk80": [
+    838332.53,
+    820477.7
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C03": {
+   "id": "L2-W-C03",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": false,
+   "angle_deg": [
+    118.33,
+    133.38
+   ],
+   "area_m2": 569.0,
+   "capacity": 0,
+   "neighbors": [
+    "L0-W-T01",
+    "L2-W-C02",
+    "L2-W-C04",
+    "L2-W-G-F",
+    "L2-W-P04"
+   ],
+   "dist_to_nearest_gate_m": 21.0,
+   "centroid": [
+    117.82,
+    -93.96,
+    12.2
+   ],
+   "centroid_hk80": [
+    838304.74,
+    820459.53
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C04": {
+   "id": "L2-W-C04",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    133.38,
+    148.42
+   ],
+   "area_m2": 546.5,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C03",
+    "L2-W-C05",
+    "L2-W-P05"
+   ],
+   "dist_to_nearest_gate_m": 47.4,
+   "centroid": [
+    98.8,
+    -120.38,
+    12.2
+   ],
+   "centroid_hk80": [
+    838285.72,
+    820433.11
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C05": {
+   "id": "L2-W-C05",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    148.42,
+    163.46
+   ],
+   "area_m2": 516.8,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C04",
+    "L2-W-C06",
+    "L2-W-G-E",
+    "L2-W-P06"
+   ],
+   "dist_to_nearest_gate_m": 16.2,
+   "centroid": [
+    89.26,
+    -149.95,
+    12.2
+   ],
+   "centroid_hk80": [
+    838276.19,
+    820403.53
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C06": {
+   "id": "L2-W-C06",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": false,
+   "angle_deg": [
+    163.46,
+    178.5
+   ],
+   "area_m2": 476.9,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C05",
+    "L2-W-C07",
+    "L2-W-P07",
+    "L2-W-P08"
+   ],
+   "dist_to_nearest_gate_m": 45.4,
+   "centroid": [
+    87.53,
+    -179.09,
+    12.2
+   ],
+   "centroid_hk80": [
+    838274.46,
+    820374.4
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C07": {
+   "id": "L2-W-C07",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    178.5,
+    193.54
+   ],
+   "area_m2": 462.0,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C06",
+    "L2-W-C08",
+    "L2-W-P08",
+    "L2-W-P09"
+   ],
+   "dist_to_nearest_gate_m": 73.1,
+   "centroid": [
+    88.65,
+    -206.73,
+    12.2
+   ],
+   "centroid_hk80": [
+    838275.58,
+    820346.75
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C08": {
+   "id": "L2-W-C08",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    193.54,
+    208.58
+   ],
+   "area_m2": 491.6,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C07",
+    "L2-W-C09",
+    "L2-W-P10"
+   ],
+   "dist_to_nearest_gate_m": 52.7,
+   "centroid": [
+    91.25,
+    -234.7,
+    12.2
+   ],
+   "centroid_hk80": [
+    838278.18,
+    820318.79
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C09": {
+   "id": "L2-W-C09",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": false,
+   "angle_deg": [
+    208.58,
+    223.62
+   ],
+   "area_m2": 532.3,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C08",
+    "L2-W-C10",
+    "L2-W-G-D",
+    "L2-W-P11"
+   ],
+   "dist_to_nearest_gate_m": 22.6,
+   "centroid": [
+    98.65,
+    -263.8,
+    12.2
+   ],
+   "centroid_hk80": [
+    838285.58,
+    820289.69
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C10": {
+   "id": "L2-W-C10",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    223.62,
+    238.67
+   ],
+   "area_m2": 566.2,
+   "capacity": 0,
+   "neighbors": [
+    "L0-W-T02",
+    "L2-W-C09",
+    "L2-W-C11",
+    "L2-W-G-C",
+    "L2-W-P12"
+   ],
+   "dist_to_nearest_gate_m": 19.1,
+   "centroid": [
+    114.22,
+    -291.89,
+    12.2
+   ],
+   "centroid_hk80": [
+    838301.14,
+    820261.6
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C11": {
+   "id": "L2-W-C11",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    238.67,
+    253.71
+   ],
+   "area_m2": 584.4,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C10",
+    "L2-W-C12",
+    "L2-W-P13",
+    "L2-W-P14"
+   ],
+   "dist_to_nearest_gate_m": 52.8,
+   "centroid": [
+    139.14,
+    -314.27,
+    12.2
+   ],
+   "centroid_hk80": [
+    838326.06,
+    820239.22
+   ],
+   "status": "provisional"
+  },
+  "L2-W-C12": {
+   "id": "L2-W-C12",
+   "type": "concourse",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": false,
+   "angle_deg": [
+    253.71,
+    268.75
+   ],
+   "area_m2": 591.4,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C11",
+    "L2-W-P15"
+   ],
+   "dist_to_nearest_gate_m": 87.2,
+   "centroid": [
+    171.12,
+    -326.44,
+    12.2
+   ],
+   "centroid_hk80": [
+    838358.05,
+    820227.05
+   ],
+   "status": "provisional"
+  },
+  "L2-W-G-F": {
+   "id": "L2-W-G-F",
+   "type": "gate",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "gate_ref": "F",
+   "angle_deg": [
+    121.19,
+    121.19
+   ],
+   "osm_id": "n5769543336",
+   "width_m": 8.0,
+   "osm_to_facade_m": 3.5,
+   "area_m2": 99.8,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C03"
+   ],
+   "dist_to_nearest_gate_m": 0.0,
+   "centroid": [
+    117.57,
+    -74.24,
+    12.2
+   ],
+   "centroid_hk80": [
+    838304.49,
+    820479.25
+   ],
+   "status": "provisional"
+  },
+  "L2-W-G-E": {
+   "id": "L2-W-G-E",
+   "type": "gate",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "gate_ref": "E",
+   "angle_deg": [
+    154.54,
+    154.54
+   ],
+   "osm_id": "n13122941487",
+   "width_m": 8.0,
+   "osm_to_facade_m": 3.5,
+   "area_m2": 99.0,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C05"
+   ],
+   "dist_to_nearest_gate_m": 0.0,
+   "centroid": [
+    75.88,
+    -140.99,
+    12.2
+   ],
+   "centroid_hk80": [
+    838262.81,
+    820412.49
+   ],
+   "status": "provisional"
+  },
+  "L2-W-G-D": {
+   "id": "L2-W-G-D",
+   "type": "gate",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "gate_ref": "D",
+   "angle_deg": [
+    208.72,
+    208.72
+   ],
+   "osm_id": "n5769543348",
+   "width_m": 8.0,
+   "osm_to_facade_m": 3.5,
+   "area_m2": 98.9,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C09"
+   ],
+   "dist_to_nearest_gate_m": 0.0,
+   "centroid": [
+    80.72,
+    -256.32,
+    12.2
+   ],
+   "centroid_hk80": [
+    838267.64,
+    820297.16
+   ],
+   "status": "provisional"
+  },
+  "L2-W-G-C": {
+   "id": "L2-W-G-C",
+   "type": "gate",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "gate_ref": "C",
+   "angle_deg": [
+    226.3,
+    226.3
+   ],
+   "osm_id": "n13122941482",
+   "width_m": 8.0,
+   "osm_to_facade_m": 3.5,
+   "area_m2": 99.2,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C10"
+   ],
+   "dist_to_nearest_gate_m": 0.0,
+   "centroid": [
+    97.33,
+    -293.99,
+    12.2
+   ],
+   "centroid_hk80": [
+    838284.25,
+    820259.49
+   ],
+   "status": "provisional"
+  },
+  "L0-W-T01": {
+   "id": "L0-W-T01",
+   "type": "tunnel",
+   "level": "L0",
+   "side": "W",
+   "z": [
+    2.0,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    122.25,
+    122.25
+   ],
+   "connects_levels": [
+    "L0",
+    "L2"
+   ],
+   "area_m2": 177.7,
+   "capacity": 0,
+   "neighbors": [
+    "L0-W-F01",
+    "L2-W-C03"
+   ],
+   "dist_to_nearest_gate_m": 49.1,
+   "centroid": [
+    137.48,
+    -110.66,
+    7.23
+   ],
+   "centroid_hk80": [
+    838324.4,
+    820442.82
+   ],
+   "status": "provisional"
+  },
+  "L0-W-T02": {
+   "id": "L0-W-T02",
+   "type": "tunnel",
+   "level": "L0",
+   "side": "W",
+   "z": [
+    2.0,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    235.25,
+    235.25
+   ],
+   "connects_levels": [
+    "L0",
+    "L2"
+   ],
+   "area_m2": 174.9,
+   "capacity": 0,
+   "neighbors": [
+    "L0-W-F03",
+    "L2-W-C10"
+   ],
+   "dist_to_nearest_gate_m": 47.1,
+   "centroid": [
+    134.69,
+    -277.33,
+    7.23
+   ],
+   "centroid_hk80": [
+    838321.61,
+    820276.16
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S01": {
+   "id": "L2-W-S01",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    88.25,
+    99.75
+   ],
+   "seats_in_model": 367,
+   "capacity": 0,
+   "closed_for_concert": true,
+   "official_sections": null,
+   "area_m2": 226.5,
+   "neighbors": [
+    "L2-W-P01"
+   ],
+   "dist_to_nearest_gate_m": 126.5,
+   "centroid": [
+    184.82,
+    -104.7,
+    8.2
+   ],
+   "centroid_hk80": [
+    838371.75,
+    820448.78
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P01": {
+   "id": "L2-W-P01",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    94.0,
+    94.0
+   ],
+   "serves": "L2-W-S01",
+   "area_m2": 68.6,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C01",
+    "L2-W-S01"
+   ],
+   "dist_to_nearest_gate_m": 108.8,
+   "centroid": [
+    183.61,
+    -87.02,
+    12.2
+   ],
+   "centroid_hk80": [
+    838370.53,
+    820466.47
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S02": {
+   "id": "L2-W-S02",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    99.75,
+    111.25
+   ],
+   "seats_in_model": 365,
+   "capacity": 0,
+   "closed_for_concert": true,
+   "official_sections": null,
+   "area_m2": 226.2,
+   "neighbors": [
+    "L2-W-P02"
+   ],
+   "dist_to_nearest_gate_m": 97.6,
+   "centroid": [
+    166.84,
+    -107.92,
+    8.21
+   ],
+   "centroid_hk80": [
+    838353.76,
+    820445.57
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P02": {
+   "id": "L2-W-P02",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    105.5,
+    105.5
+   ],
+   "serves": "L2-W-S02",
+   "area_m2": 67.9,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C02",
+    "L2-W-S02"
+   ],
+   "dist_to_nearest_gate_m": 80.0,
+   "centroid": [
+    162.14,
+    -90.98,
+    12.2
+   ],
+   "centroid_hk80": [
+    838349.06,
+    820462.51
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S03": {
+   "id": "L2-W-S03",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    111.25,
+    122.25
+   ],
+   "seats_in_model": 307,
+   "capacity": 0,
+   "closed_for_concert": true,
+   "official_sections": null,
+   "area_m2": 179.7,
+   "neighbors": [
+    "L2-W-P03"
+   ],
+   "dist_to_nearest_gate_m": 98.8,
+   "centroid": [
+    151.46,
+    -113.83,
+    8.17
+   ],
+   "centroid_hk80": [
+    838338.39,
+    820439.65
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P03": {
+   "id": "L2-W-P03",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    116.75,
+    116.75
+   ],
+   "serves": "L2-W-S03",
+   "area_m2": 67.1,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C02",
+    "L2-W-S03"
+   ],
+   "dist_to_nearest_gate_m": 81.2,
+   "centroid": [
+    142.34,
+    -98.87,
+    12.2
+   ],
+   "centroid_hk80": [
+    838329.27,
+    820454.62
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S04": {
+   "id": "L2-W-S04",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    122.25,
+    133.75
+   ],
+   "seats_in_model": 320,
+   "capacity": 0,
+   "closed_for_concert": true,
+   "official_sections": null,
+   "area_m2": 187.2,
+   "neighbors": [
+    "L2-W-P04"
+   ],
+   "dist_to_nearest_gate_m": 58.8,
+   "centroid": [
+    135.31,
+    -126.45,
+    8.19
+   ],
+   "centroid_hk80": [
+    838322.24,
+    820427.04
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P04": {
+   "id": "L2-W-P04",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    128.0,
+    128.0
+   ],
+   "serves": "L2-W-S04",
+   "area_m2": 62.0,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C03",
+    "L2-W-S04"
+   ],
+   "dist_to_nearest_gate_m": 41.7,
+   "centroid": [
+    125.93,
+    -112.28,
+    12.2
+   ],
+   "centroid_hk80": [
+    838312.86,
+    820441.21
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S05": {
+   "id": "L2-W-S05",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    133.75,
+    145.75
+   ],
+   "seats_in_model": 366,
+   "capacity": 237,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 226.5,
+   "neighbors": [
+    "L2-W-P05"
+   ],
+   "dist_to_nearest_gate_m": 80.7,
+   "centroid": [
+    125.44,
+    -140.03,
+    8.14
+   ],
+   "centroid_hk80": [
+    838312.36,
+    820413.46
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P05": {
+   "id": "L2-W-P05",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    139.75,
+    139.75
+   ],
+   "serves": "L2-W-S05",
+   "area_m2": 55.9,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C04",
+    "L2-W-S05"
+   ],
+   "dist_to_nearest_gate_m": 64.9,
+   "centroid": [
+    113.34,
+    -129.91,
+    12.2
+   ],
+   "centroid_hk80": [
+    838300.27,
+    820423.58
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S06": {
+   "id": "L2-W-S06",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    145.75,
+    158.25
+   ],
+   "seats_in_model": 366,
+   "capacity": 366,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 227.7,
+   "neighbors": [
+    "L2-W-P06"
+   ],
+   "dist_to_nearest_gate_m": 48.4,
+   "centroid": [
+    118.31,
+    -156.94,
+    8.12
+   ],
+   "centroid_hk80": [
+    838305.24,
+    820396.55
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P06": {
+   "id": "L2-W-P06",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    152.0,
+    152.0
+   ],
+   "serves": "L2-W-S06",
+   "area_m2": 47.9,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C05",
+    "L2-W-S06"
+   ],
+   "dist_to_nearest_gate_m": 33.9,
+   "centroid": [
+    105.46,
+    -150.24,
+    12.2
+   ],
+   "centroid_hk80": [
+    838292.38,
+    820403.25
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S07": {
+   "id": "L2-W-S07",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    158.25,
+    171.25
+   ],
+   "seats_in_model": 366,
+   "capacity": 366,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 225.0,
+   "neighbors": [
+    "L2-W-P07"
+   ],
+   "dist_to_nearest_gate_m": 77.9,
+   "centroid": [
+    115.39,
+    -175.02,
+    8.18
+   ],
+   "centroid_hk80": [
+    838302.31,
+    820378.47
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P07": {
+   "id": "L2-W-P07",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    164.75,
+    164.75
+   ],
+   "serves": "L2-W-S07",
+   "area_m2": 40.6,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C06",
+    "L2-W-S07"
+   ],
+   "dist_to_nearest_gate_m": 64.7,
+   "centroid": [
+    102.59,
+    -171.68,
+    12.2
+   ],
+   "centroid_hk80": [
+    838289.52,
+    820381.81
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S08": {
+   "id": "L2-W-S08",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    171.25,
+    185.0
+   ],
+   "seats_in_model": 366,
+   "capacity": 366,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 225.3,
+   "neighbors": [
+    "L2-W-P08"
+   ],
+   "dist_to_nearest_gate_m": 80.3,
+   "centroid": [
+    115.46,
+    -193.29,
+    8.23
+   ],
+   "centroid_hk80": [
+    838302.39,
+    820360.19
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P08": {
+   "id": "L2-W-P08",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    178.12,
+    178.12
+   ],
+   "serves": "L2-W-S08",
+   "area_m2": 37.8,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C06",
+    "L2-W-C07",
+    "L2-W-S08"
+   ],
+   "dist_to_nearest_gate_m": 67.8,
+   "centroid": [
+    102.92,
+    -192.95,
+    12.2
+   ],
+   "centroid_hk80": [
+    838289.85,
+    820360.54
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S09": {
+   "id": "L2-W-S09",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    185.0,
+    198.75
+   ],
+   "seats_in_model": 365,
+   "capacity": 365,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 227.8,
+   "neighbors": [
+    "L2-W-P09"
+   ],
+   "dist_to_nearest_gate_m": 104.8,
+   "centroid": [
+    116.58,
+    -211.65,
+    8.23
+   ],
+   "centroid_hk80": [
+    838303.51,
+    820341.84
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P09": {
+   "id": "L2-W-P09",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    191.88,
+    191.88
+   ],
+   "serves": "L2-W-S09",
+   "area_m2": 38.1,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C07",
+    "L2-W-S09"
+   ],
+   "dist_to_nearest_gate_m": 92.2,
+   "centroid": [
+    104.19,
+    -214.14,
+    12.2
+   ],
+   "centroid_hk80": [
+    838291.11,
+    820339.35
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S10": {
+   "id": "L2-W-S10",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    198.75,
+    211.75
+   ],
+   "seats_in_model": 371,
+   "capacity": 371,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 228.1,
+   "neighbors": [
+    "L2-W-P10"
+   ],
+   "dist_to_nearest_gate_m": 83.4,
+   "centroid": [
+    119.26,
+    -229.93,
+    8.18
+   ],
+   "centroid_hk80": [
+    838306.19,
+    820323.56
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P10": {
+   "id": "L2-W-P10",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    205.25,
+    205.25
+   ],
+   "serves": "L2-W-S10",
+   "area_m2": 43.1,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C08",
+    "L2-W-S10"
+   ],
+   "dist_to_nearest_gate_m": 69.8,
+   "centroid": [
+    106.88,
+    -235.62,
+    12.2
+   ],
+   "centroid_hk80": [
+    838293.8,
+    820317.87
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S11": {
+   "id": "L2-W-S11",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    211.75,
+    223.75
+   ],
+   "seats_in_model": 371,
+   "capacity": 371,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 221.5,
+   "neighbors": [
+    "L2-W-P11"
+   ],
+   "dist_to_nearest_gate_m": 54.3,
+   "centroid": [
+    125.15,
+    -247.16,
+    8.16
+   ],
+   "centroid_hk80": [
+    838312.07,
+    820306.33
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P11": {
+   "id": "L2-W-P11",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    217.75,
+    217.75
+   ],
+   "serves": "L2-W-S11",
+   "area_m2": 50.5,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C09",
+    "L2-W-S11"
+   ],
+   "dist_to_nearest_gate_m": 39.4,
+   "centroid": [
+    113.29,
+    -256.18,
+    12.2
+   ],
+   "centroid_hk80": [
+    838300.22,
+    820297.31
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S12": {
+   "id": "L2-W-S12",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    223.75,
+    235.25
+   ],
+   "seats_in_model": 312,
+   "capacity": 312,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 184.5,
+   "neighbors": [
+    "L2-W-P12"
+   ],
+   "dist_to_nearest_gate_m": 55.8,
+   "centroid": [
+    133.53,
+    -261.37,
+    8.2
+   ],
+   "centroid_hk80": [
+    838320.46,
+    820292.11
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P12": {
+   "id": "L2-W-P12",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    229.5,
+    229.5
+   ],
+   "serves": "L2-W-S12",
+   "area_m2": 58.7,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C10",
+    "L2-W-S12"
+   ],
+   "dist_to_nearest_gate_m": 39.1,
+   "centroid": [
+    123.78,
+    -274.8,
+    12.2
+   ],
+   "centroid_hk80": [
+    838310.71,
+    820278.69
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S13": {
+   "id": "L2-W-S13",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    235.25,
+    246.75
+   ],
+   "seats_in_model": 313,
+   "capacity": 313,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 190.1,
+   "neighbors": [
+    "L2-W-P13"
+   ],
+   "dist_to_nearest_gate_m": 96.7,
+   "centroid": [
+    148.49,
+    -275.93,
+    8.2
+   ],
+   "centroid_hk80": [
+    838335.42,
+    820277.56
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P13": {
+   "id": "L2-W-P13",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    241.0,
+    241.0
+   ],
+   "serves": "L2-W-S13",
+   "area_m2": 66.8,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C11",
+    "L2-W-S13"
+   ],
+   "dist_to_nearest_gate_m": 79.2,
+   "centroid": [
+    138.82,
+    -290.37,
+    12.2
+   ],
+   "centroid_hk80": [
+    838325.75,
+    820263.12
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S14": {
+   "id": "L2-W-S14",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    246.75,
+    257.75
+   ],
+   "seats_in_model": 366,
+   "capacity": 366,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 219.1,
+   "neighbors": [
+    "L2-W-P14"
+   ],
+   "dist_to_nearest_gate_m": 98.0,
+   "centroid": [
+    163.1,
+    -283.77,
+    8.09
+   ],
+   "centroid_hk80": [
+    838350.02,
+    820269.72
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P14": {
+   "id": "L2-W-P14",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    252.25,
+    252.25
+   ],
+   "serves": "L2-W-S14",
+   "area_m2": 72.1,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C11",
+    "L2-W-S14"
+   ],
+   "dist_to_nearest_gate_m": 79.5,
+   "centroid": [
+    157.44,
+    -301.38,
+    12.2
+   ],
+   "centroid_hk80": [
+    838344.36,
+    820252.11
+   ],
+   "status": "provisional"
+  },
+  "L2-W-S15": {
+   "id": "L2-W-S15",
+   "type": "seating",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    4.5,
+    11.799999999999999
+   ],
+   "monitored": true,
+   "angle_deg": [
+    257.75,
+    268.75
+   ],
+   "seats_in_model": 366,
+   "capacity": 366,
+   "closed_for_concert": false,
+   "official_sections": null,
+   "area_m2": 220.2,
+   "neighbors": [
+    "L2-W-P15"
+   ],
+   "dist_to_nearest_gate_m": 127.5,
+   "centroid": [
+    180.3,
+    -288.19,
+    8.1
+   ],
+   "centroid_hk80": [
+    838367.22,
+    820265.3
+   ],
+   "status": "provisional"
+  },
+  "L2-W-P15": {
+   "id": "L2-W-P15",
+   "type": "portal",
+   "level": "L2",
+   "side": "W",
+   "z": [
+    12.2,
+    12.2
+   ],
+   "monitored": true,
+   "angle_deg": [
+    263.25,
+    263.25
+   ],
+   "serves": "L2-W-S15",
+   "area_m2": 74.0,
+   "capacity": 0,
+   "neighbors": [
+    "L2-W-C12",
+    "L2-W-S15"
+   ],
+   "dist_to_nearest_gate_m": 108.7,
+   "centroid": [
+    178.08,
+    -306.84,
+    12.2
+   ],
+   "centroid_hk80": [
+    838365.01,
+    820246.64
+   ],
+   "status": "provisional"
+  },
+  "L0-W-F01": {
+   "id": "L0-W-F01",
+   "type": "floor",
+   "level": "L0",
+   "side": "W",
+   "z": [
+    2.0,
+    2.0
+   ],
+   "monitored": true,
+   "capacity": 2013,
+   "seats_in_model": 2013,
+   "closed_for_concert": false,
+   "area_m2": 3336.5,
+   "neighbors": [
+    "L0-W-F02",
+    "L0-W-T01"
+   ],
+   "dist_to_nearest_gate_m": 110.1,
+   "centroid": [
+    153.83,
+    -168.33,
+    2.0
+   ],
+   "centroid_hk80": [
+    838340.76,
+    820385.16
+   ],
+   "status": "provisional"
+  },
+  "L0-W-F02": {
+   "id": "L0-W-F02",
+   "type": "floor",
+   "level": "L0",
+   "side": "W",
+   "z": [
+    2.0,
+    2.0
+   ],
+   "monitored": true,
+   "capacity": 2074,
+   "seats_in_model": 2074,
+   "closed_for_concert": false,
+   "area_m2": 2277.2,
+   "neighbors": [
+    "L0-W-F01",
+    "L0-W-F03"
+   ],
+   "dist_to_nearest_gate_m": 127.7,
+   "centroid": [
+    157.82,
+    -212.55,
+    2.0
+   ],
+   "centroid_hk80": [
+    838344.74,
+    820340.93
+   ],
+   "status": "provisional"
+  },
+  "L0-W-F03": {
+   "id": "L0-W-F03",
+   "type": "floor",
+   "level": "L0",
+   "side": "W",
+   "z": [
+    2.0,
+    2.0
+   ],
+   "monitored": true,
+   "capacity": 2013,
+   "seats_in_model": 2013,
+   "closed_for_concert": false,
+   "area_m2": 2509.6,
+   "neighbors": [
+    "L0-W-F02",
+    "L0-W-T02"
+   ],
+   "dist_to_nearest_gate_m": 87.9,
+   "centroid": [
+    164.94,
+    -251.55,
+    2.0
+   ],
+   "centroid_hk80": [
+    838351.87,
+    820301.93
+   ],
+   "status": "provisional"
+  }
+ },
+ "lines": {
+  "L0-W-CL01": {
+   "id": "L0-W-CL01",
+   "from": "L0-W-F02",
+   "to": "L0-W-F01",
+   "counting": false,
+   "width_m": 68.41,
+   "z": 2.0
+  },
+  "L0-W-CL02": {
+   "id": "L0-W-CL02",
+   "from": "L0-W-F02",
+   "to": "L0-W-F03",
+   "counting": false,
+   "width_m": 64.66,
+   "z": 2.0
+  },
+  "L0-W-CL03": {
+   "id": "L0-W-CL03",
+   "from": "L0-W-F01",
+   "to": "L0-W-T01",
+   "counting": true,
+   "width_m": 5.35,
+   "z": 2.0
+  },
+  "L0-W-CL04": {
+   "id": "L0-W-CL04",
+   "from": "L0-W-F03",
+   "to": "L0-W-T02",
+   "counting": true,
+   "width_m": 5.42,
+   "z": 2.0
+  },
+  "L2-W-CL05": {
+   "id": "L2-W-CL05",
+   "from": "L2-W-C01",
+   "to": "L2-W-C02",
+   "counting": true,
+   "width_m": 17.31,
+   "z": 12.2
+  },
+  "L2-W-CL06": {
+   "id": "L2-W-CL06",
+   "from": "L2-W-P01",
+   "to": "L2-W-C01",
+   "counting": true,
+   "width_m": 3.31,
+   "z": 12.2
+  },
+  "L2-W-CL07": {
+   "id": "L2-W-CL07",
+   "from": "L2-W-C02",
+   "to": "L2-W-C03",
+   "counting": true,
+   "width_m": 17.38,
+   "z": 12.2
+  },
+  "L2-W-CL08": {
+   "id": "L2-W-CL08",
+   "from": "L2-W-P02",
+   "to": "L2-W-C02",
+   "counting": true,
+   "width_m": 3.3,
+   "z": 12.2
+  },
+  "L2-W-CL09": {
+   "id": "L2-W-CL09",
+   "from": "L2-W-P03",
+   "to": "L2-W-C02",
+   "counting": true,
+   "width_m": 3.31,
+   "z": 12.2
+  },
+  "L0-W-CL10": {
+   "id": "L0-W-CL10",
+   "from": "L0-W-T01",
+   "to": "L2-W-C03",
+   "counting": true,
+   "width_m": 5.39,
+   "z": 12.2
+  },
+  "L2-W-CL11": {
+   "id": "L2-W-CL11",
+   "from": "L2-W-C03",
+   "to": "L2-W-C04",
+   "counting": true,
+   "width_m": 17.63,
+   "z": 12.2
+  },
+  "L2-W-CL12": {
+   "id": "L2-W-CL12",
+   "from": "L2-W-C03",
+   "to": "L2-W-G-F",
+   "counting": true,
+   "width_m": 8.0,
+   "z": 12.2
+  },
+  "L2-W-CL13": {
+   "id": "L2-W-CL13",
+   "from": "L2-W-P04",
+   "to": "L2-W-C03",
+   "counting": true,
+   "width_m": 3.38,
+   "z": 12.2
+  },
+  "L2-W-CL14": {
+   "id": "L2-W-CL14",
+   "from": "L2-W-C04",
+   "to": "L2-W-C05",
+   "counting": true,
+   "width_m": 17.79,
+   "z": 12.2
+  },
+  "L2-W-CL15": {
+   "id": "L2-W-CL15",
+   "from": "L2-W-P05",
+   "to": "L2-W-C04",
+   "counting": true,
+   "width_m": 3.45,
+   "z": 12.2
+  },
+  "L2-W-CL16": {
+   "id": "L2-W-CL16",
+   "from": "L2-W-C05",
+   "to": "L2-W-C06",
+   "counting": true,
+   "width_m": 17.84,
+   "z": 12.2
+  },
+  "L2-W-CL17": {
+   "id": "L2-W-CL17",
+   "from": "L2-W-C05",
+   "to": "L2-W-G-E",
+   "counting": true,
+   "width_m": 8.0,
+   "z": 12.2
+  },
+  "L2-W-CL18": {
+   "id": "L2-W-CL18",
+   "from": "L2-W-P06",
+   "to": "L2-W-C05",
+   "counting": true,
+   "width_m": 3.46,
+   "z": 12.2
+  },
+  "L2-W-CL19": {
+   "id": "L2-W-CL19",
+   "from": "L2-W-C06",
+   "to": "L2-W-C07",
+   "counting": true,
+   "width_m": 17.35,
+   "z": 12.2
+  },
+  "L2-W-CL20": {
+   "id": "L2-W-CL20",
+   "from": "L2-W-P07",
+   "to": "L2-W-C06",
+   "counting": true,
+   "width_m": 3.45,
+   "z": 12.2
+  },
+  "L2-W-CL21": {
+   "id": "L2-W-CL21",
+   "from": "L2-W-P08",
+   "to": "L2-W-C06",
+   "counting": true,
+   "width_m": 2.43,
+   "z": 12.2
+  },
+  "L2-W-CL22": {
+   "id": "L2-W-CL22",
+   "from": "L2-W-C07",
+   "to": "L2-W-C08",
+   "counting": true,
+   "width_m": 17.53,
+   "z": 12.2
+  },
+  "L2-W-CL23": {
+   "id": "L2-W-CL23",
+   "from": "L2-W-C07",
+   "to": "L2-W-P08",
+   "counting": false,
+   "width_m": 1.21,
+   "z": 12.2
+  },
+  "L2-W-CL24": {
+   "id": "L2-W-CL24",
+   "from": "L2-W-P09",
+   "to": "L2-W-C07",
+   "counting": true,
+   "width_m": 3.35,
+   "z": 12.2
+  },
+  "L2-W-CL25": {
+   "id": "L2-W-CL25",
+   "from": "L2-W-C08",
+   "to": "L2-W-C09",
+   "counting": true,
+   "width_m": 17.93,
+   "z": 12.2
+  },
+  "L2-W-CL26": {
+   "id": "L2-W-CL26",
+   "from": "L2-W-P10",
+   "to": "L2-W-C08",
+   "counting": true,
+   "width_m": 3.47,
+   "z": 12.2
+  },
+  "L2-W-CL27": {
+   "id": "L2-W-CL27",
+   "from": "L2-W-C09",
+   "to": "L2-W-C10",
+   "counting": true,
+   "width_m": 17.83,
+   "z": 12.2
+  },
+  "L2-W-CL28": {
+   "id": "L2-W-CL28",
+   "from": "L2-W-C09",
+   "to": "L2-W-G-D",
+   "counting": true,
+   "width_m": 8.0,
+   "z": 12.2
+  },
+  "L2-W-CL29": {
+   "id": "L2-W-CL29",
+   "from": "L2-W-P11",
+   "to": "L2-W-C09",
+   "counting": true,
+   "width_m": 3.52,
+   "z": 12.2
+  },
+  "L0-W-CL30": {
+   "id": "L0-W-CL30",
+   "from": "L0-W-T02",
+   "to": "L2-W-C10",
+   "counting": true,
+   "width_m": 5.46,
+   "z": 12.2
+  },
+  "L2-W-CL31": {
+   "id": "L2-W-CL31",
+   "from": "L2-W-C10",
+   "to": "L2-W-C11",
+   "counting": true,
+   "width_m": 17.55,
+   "z": 12.2
+  },
+  "L2-W-CL32": {
+   "id": "L2-W-CL32",
+   "from": "L2-W-C10",
+   "to": "L2-W-G-C",
+   "counting": true,
+   "width_m": 8.0,
+   "z": 12.2
+  },
+  "L2-W-CL33": {
+   "id": "L2-W-CL33",
+   "from": "L2-W-P12",
+   "to": "L2-W-C10",
+   "counting": true,
+   "width_m": 3.43,
+   "z": 12.2
+  },
+  "L2-W-CL34": {
+   "id": "L2-W-CL34",
+   "from": "L2-W-C11",
+   "to": "L2-W-C12",
+   "counting": true,
+   "width_m": 17.31,
+   "z": 12.2
+  },
+  "L2-W-CL35": {
+   "id": "L2-W-CL35",
+   "from": "L2-W-P13",
+   "to": "L2-W-C11",
+   "counting": true,
+   "width_m": 3.4,
+   "z": 12.2
+  },
+  "L2-W-CL36": {
+   "id": "L2-W-CL36",
+   "from": "L2-W-P14",
+   "to": "L2-W-C11",
+   "counting": true,
+   "width_m": 3.35,
+   "z": 12.2
+  },
+  "L2-W-CL37": {
+   "id": "L2-W-CL37",
+   "from": "L2-W-P15",
+   "to": "L2-W-C12",
+   "counting": true,
+   "width_m": 3.32,
+   "z": 12.2
+  },
+  "L2-W-CL38": {
+   "id": "L2-W-CL38",
+   "from": "L2-W-S01",
+   "to": "L2-W-P01",
+   "counting": false,
+   "width_m": 3.31,
+   "z": 12.2
+  },
+  "L2-W-CL39": {
+   "id": "L2-W-CL39",
+   "from": "L2-W-S02",
+   "to": "L2-W-P02",
+   "counting": false,
+   "width_m": 3.3,
+   "z": 12.2
+  },
+  "L2-W-CL40": {
+   "id": "L2-W-CL40",
+   "from": "L2-W-S03",
+   "to": "L2-W-P03",
+   "counting": false,
+   "width_m": 3.31,
+   "z": 12.2
+  },
+  "L2-W-CL41": {
+   "id": "L2-W-CL41",
+   "from": "L2-W-S04",
+   "to": "L2-W-P04",
+   "counting": false,
+   "width_m": 3.34,
+   "z": 12.2
+  },
+  "L2-W-CL42": {
+   "id": "L2-W-CL42",
+   "from": "L2-W-S05",
+   "to": "L2-W-P05",
+   "counting": false,
+   "width_m": 3.36,
+   "z": 12.2
+  },
+  "L2-W-CL43": {
+   "id": "L2-W-CL43",
+   "from": "L2-W-S06",
+   "to": "L2-W-P06",
+   "counting": false,
+   "width_m": 3.38,
+   "z": 12.2
+  },
+  "L2-W-CL44": {
+   "id": "L2-W-CL44",
+   "from": "L2-W-S07",
+   "to": "L2-W-P07",
+   "counting": false,
+   "width_m": 3.42,
+   "z": 12.2
+  },
+  "L2-W-CL45": {
+   "id": "L2-W-CL45",
+   "from": "L2-W-S08",
+   "to": "L2-W-P08",
+   "counting": false,
+   "width_m": 3.32,
+   "z": 12.2
+  },
+  "L2-W-CL46": {
+   "id": "L2-W-CL46",
+   "from": "L2-W-S09",
+   "to": "L2-W-P09",
+   "counting": false,
+   "width_m": 3.35,
+   "z": 12.2
+  },
+  "L2-W-CL47": {
+   "id": "L2-W-CL47",
+   "from": "L2-W-S10",
+   "to": "L2-W-P10",
+   "counting": false,
+   "width_m": 3.4,
+   "z": 12.2
+  },
+  "L2-W-CL48": {
+   "id": "L2-W-CL48",
+   "from": "L2-W-S11",
+   "to": "L2-W-P11",
+   "counting": false,
+   "width_m": 3.41,
+   "z": 12.2
+  },
+  "L2-W-CL49": {
+   "id": "L2-W-CL49",
+   "from": "L2-W-S12",
+   "to": "L2-W-P12",
+   "counting": false,
+   "width_m": 3.38,
+   "z": 12.2
+  },
+  "L2-W-CL50": {
+   "id": "L2-W-CL50",
+   "from": "L2-W-S13",
+   "to": "L2-W-P13",
+   "counting": false,
+   "width_m": 3.33,
+   "z": 12.2
+  },
+  "L2-W-CL51": {
+   "id": "L2-W-CL51",
+   "from": "L2-W-S14",
+   "to": "L2-W-P14",
+   "counting": false,
+   "width_m": 3.3,
+   "z": 12.2
+  },
+  "L2-W-CL52": {
+   "id": "L2-W-CL52",
+   "from": "L2-W-S15",
+   "to": "L2-W-P15",
+   "counting": false,
+   "width_m": 3.3,
+   "z": 12.2
+  }
+ },
+ "displays": {
+  "L2-W-D01": {
+   "id": "L2-W-D01",
+   "at_line": "L2-W-CL06",
+   "zone": "L2-W-C01",
+   "upstream": "L2-W-P01",
+   "serves": [
+    "L2-W-S01"
+   ],
+   "angle_deg": 94.0,
+   "xyz": [
+    182.81,
+    -75.62,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D02": {
+   "id": "L2-W-D02",
+   "at_line": "L2-W-CL08",
+   "zone": "L2-W-C02",
+   "upstream": "L2-W-P02",
+   "serves": [
+    "L2-W-S02"
+   ],
+   "angle_deg": 105.5,
+   "xyz": [
+    159.11,
+    -80.08,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D03": {
+   "id": "L2-W-D03",
+   "at_line": "L2-W-CL09",
+   "zone": "L2-W-C02",
+   "upstream": "L2-W-P03",
+   "serves": [
+    "L2-W-S03"
+   ],
+   "angle_deg": 116.75,
+   "xyz": [
+    137.3,
+    -88.89,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D04": {
+   "id": "L2-W-D04",
+   "at_line": "L0-W-CL10",
+   "zone": "L2-W-C03",
+   "upstream": "L0-W-T01",
+   "serves": [
+    "L0-W-F01"
+   ],
+   "angle_deg": 122.26,
+   "xyz": [
+    127.98,
+    -95.66,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D05": {
+   "id": "L2-W-D05",
+   "at_line": "L2-W-CL13",
+   "zone": "L2-W-C03",
+   "upstream": "L2-W-P04",
+   "serves": [
+    "L2-W-S04"
+   ],
+   "angle_deg": 128.01,
+   "xyz": [
+    119.56,
+    -104.14,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D06": {
+   "id": "L2-W-D06",
+   "at_line": "L2-W-CL15",
+   "zone": "L2-W-C04",
+   "upstream": "L2-W-P05",
+   "serves": [
+    "L2-W-S05"
+   ],
+   "angle_deg": 139.76,
+   "xyz": [
+    106.22,
+    -123.92,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D07": {
+   "id": "L2-W-D07",
+   "at_line": "L2-W-CL18",
+   "zone": "L2-W-C05",
+   "upstream": "L2-W-P06",
+   "serves": [
+    "L2-W-S06"
+   ],
+   "angle_deg": 152.01,
+   "xyz": [
+    98.4,
+    -146.52,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D08": {
+   "id": "L2-W-D08",
+   "at_line": "L2-W-CL20",
+   "zone": "L2-W-C06",
+   "upstream": "L2-W-P07",
+   "serves": [
+    "L2-W-S07"
+   ],
+   "angle_deg": 164.77,
+   "xyz": [
+    96.06,
+    -169.93,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D09": {
+   "id": "L2-W-D09",
+   "at_line": "L2-W-CL21",
+   "zone": "L2-W-C06",
+   "upstream": "L2-W-P08",
+   "serves": [
+    "L2-W-S08"
+   ],
+   "angle_deg": 177.86,
+   "xyz": [
+    96.62,
+    -192.3,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D10": {
+   "id": "L2-W-D10",
+   "at_line": "L2-W-CL24",
+   "zone": "L2-W-C07",
+   "upstream": "L2-W-P09",
+   "serves": [
+    "L2-W-S09"
+   ],
+   "angle_deg": 191.87,
+   "xyz": [
+    97.97,
+    -215.44,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D11": {
+   "id": "L2-W-D11",
+   "at_line": "L2-W-CL26",
+   "zone": "L2-W-C08",
+   "upstream": "L2-W-P10",
+   "serves": [
+    "L2-W-S10"
+   ],
+   "angle_deg": 205.23,
+   "xyz": [
+    100.37,
+    -238.65,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D12": {
+   "id": "L2-W-D12",
+   "at_line": "L2-W-CL29",
+   "zone": "L2-W-C09",
+   "upstream": "L2-W-P11",
+   "serves": [
+    "L2-W-S11"
+   ],
+   "angle_deg": 217.74,
+   "xyz": [
+    106.63,
+    -261.3,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D13": {
+   "id": "L2-W-D13",
+   "at_line": "L0-W-CL30",
+   "zone": "L2-W-C10",
+   "upstream": "L0-W-T02",
+   "serves": [
+    "L0-W-F02",
+    "L0-W-F03"
+   ],
+   "angle_deg": 235.23,
+   "xyz": [
+    124.69,
+    -291.68,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D14": {
+   "id": "L2-W-D14",
+   "at_line": "L2-W-CL33",
+   "zone": "L2-W-C10",
+   "upstream": "L2-W-P12",
+   "serves": [
+    "L2-W-S12"
+   ],
+   "angle_deg": 229.49,
+   "xyz": [
+    117.41,
+    -282.22,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D15": {
+   "id": "L2-W-D15",
+   "at_line": "L2-W-CL35",
+   "zone": "L2-W-C11",
+   "upstream": "L2-W-P13",
+   "serves": [
+    "L2-W-S13"
+   ],
+   "angle_deg": 240.99,
+   "xyz": [
+    133.4,
+    -300.1,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D16": {
+   "id": "L2-W-D16",
+   "at_line": "L2-W-CL36",
+   "zone": "L2-W-C11",
+   "upstream": "L2-W-P14",
+   "serves": [
+    "L2-W-S14"
+   ],
+   "angle_deg": 252.24,
+   "xyz": [
+    153.76,
+    -312.81,
+    15.399999999999999
+   ]
+  },
+  "L2-W-D17": {
+   "id": "L2-W-D17",
+   "at_line": "L2-W-CL37",
+   "zone": "L2-W-C12",
+   "upstream": "L2-W-P15",
+   "serves": [
+    "L2-W-S15"
+   ],
+   "angle_deg": 263.25,
+   "xyz": [
+    176.62,
+    -319.1,
+    15.399999999999999
+   ]
+  }
+ },
+ "gates": {
+  "L2-W-G-F": {
+   "ref": "F",
+   "osm_id": "n5769543336"
+  },
+  "L2-W-G-E": {
+   "ref": "E",
+   "osm_id": "n13122941487"
+  },
+  "L2-W-G-D": {
+   "ref": "D",
+   "osm_id": "n5769543348"
+  },
+  "L2-W-G-C": {
+   "ref": "C",
+   "osm_id": "n13122941482"
+  }
+ }
+}

@@ -1,0 +1,30 @@
+# M1 scope and parameters. Extend the scope by editing this file and re-running build_layout.py.
+version: "0.1"
+status: provisional            # zone and facility IDs await the leader's model list (AGENTS.md)
+frame:
+  origin_E: 838186.926         # EPSG:2326; x = E - origin_E, y = N - origin_N (Community_Accessibility_DT origin_fit.json)
+  origin_N: 820553.488
+  source: "fit of Blender building footprints to OSM, median 1 mm (origin_fit.json, recommended_origin)"
+scope:
+  side: W                      # W = bowl angles 90..270 deg (x < centre); add E later
+  angle_range_deg: [88.0, 270.5]   # measured counter-clockwise from east about the bowl centre
+  gates: [F, E, D, C]          # OSM gates inside the angle range
+levels:
+  L0: {z: 2.0, label: "Pitch level (concert floor)"}
+  L2: {z: 12.2, label: "Main concourse and lower tier"}
+lower_tier: {z_min: 4.0, z_max: 12.0}
+floor: {z_max: 3.0}
+assumed:                       # values not present in the .blend; each is listed in the QA report
+  concourse_width_m: {value: 17.0, source: "width of the 'East concourse' interior set in the .blend (17 x 55 m)"}
+  concourse_inset_m: {value: 0.5, source: "assumed facade thickness"}
+  portal_width_m: {value: 3.0, source: "assumed; no vomitories in the .blend"}
+  gate_width_m: {value: 8.0, source: "assumed; OSM gives gate points only"}
+  gate_depth_m: {value: 12.0, source: "assumed gate forecourt depth"}
+  gate_flow_share: {value: 0.4, source: "assumed share of the gate width that passes people (doors, barriers, stewards)"}
+  specific_flow_pps_per_m: {value: 1.3, source: "design flow per metre of clear width (SFPE handbook order of magnitude; to cite)"}
+  jam_density_ppm2: {value: 4.0, source: "assumed density at which a zone accepts nobody"}
+  tunnel_width_m: {value: 5.0, source: "assumed; no pitch tunnels in the .blend"}
+  tunnel_angles_deg: {value: [128.0, 232.0], source: "assumed, at the bowl corners"}
+  stage_side: {value: north, source: ".blend stage deck at y -160..-137 (roadmap text says south; to confirm)"}
+monitoring:
+  unmonitored_concourse_cells: [3, 6, 9, 12]   # 1-based cell numbers without an assumed camera

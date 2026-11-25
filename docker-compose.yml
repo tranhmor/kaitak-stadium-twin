@@ -1,0 +1,16 @@
+# MongoDB for the indoor twin (M2). Separate from the archived Community_Accessibility_DT database:
+# own container, own volume, own port. Start: `docker compose up -d`; stop: `docker compose down`.
+# Bound to 127.0.0.1 only: no authentication, never expose it beyond this machine.
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: kaitak-stadium-mongo
+    ports:
+      - "127.0.0.1:27027:27017"
+    volumes:
+      - kaitak_stadium_mongo:/data/db
+    restart: unless-stopped
+
+volumes:
+  kaitak_stadium_mongo:
+    name: kaitak_stadium_mongo

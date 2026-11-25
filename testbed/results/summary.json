@@ -1,0 +1,119 @@
+{
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "scenario": "L2-W-G-D closed at 120 s",
+ "by_arm": {
+  "open-no-guidance": {
+   "t90_s": 1152.4,
+   "t100_s": 1396.2,
+   "over_threshold_zone_seconds": 1630.6,
+   "peak_density": 4.0,
+   "density_mae": 0.00488,
+   "density_max_error": 0.14244,
+   "blind_zone_mae": 0.00468,
+   "blind_zone_max_error": 0.029720000000000003,
+   "forecast_mae": 0.042039999999999994,
+   "true_compliance": null,
+   "estimated_compliance": null,
+   "runs": 5
+  },
+  "closed-no-guidance": {
+   "t90_s": 1281.64,
+   "t100_s": 1525.2,
+   "over_threshold_zone_seconds": 1891.0,
+   "peak_density": 4.0,
+   "density_mae": 0.00464,
+   "density_max_error": 0.14244,
+   "blind_zone_mae": 0.00424,
+   "blind_zone_max_error": 0.02264,
+   "forecast_mae": 0.040940000000000004,
+   "true_compliance": null,
+   "estimated_compliance": null,
+   "runs": 5
+  },
+  "closed-guided-p0.20": {
+   "t90_s": 1076.0,
+   "t100_s": 1416.6,
+   "over_threshold_zone_seconds": 1458.8,
+   "peak_density": 4.0,
+   "density_mae": 0.005259999999999999,
+   "density_max_error": 0.14588,
+   "blind_zone_mae": 0.00832,
+   "blind_zone_max_error": 0.02876,
+   "forecast_mae": 0.06756000000000001,
+   "true_compliance": 0.1970223393307469,
+   "estimated_compliance": 0.2064,
+   "runs": 5
+  },
+  "closed-guided-p0.35": {
+   "t90_s": 955.4800000000002,
+   "t100_s": 1424.6,
+   "over_threshold_zone_seconds": 1208.2,
+   "peak_density": 4.0,
+   "density_mae": 0.00534,
+   "density_max_error": 0.15502,
+   "blind_zone_mae": 0.009260000000000001,
+   "blind_zone_max_error": 0.03826,
+   "forecast_mae": 0.07522,
+   "true_compliance": 0.34775583157740064,
+   "estimated_compliance": 0.35679999999999995,
+   "runs": 5
+  },
+  "closed-guided-p0.50": {
+   "t90_s": 873.6,
+   "t100_s": 1353.6,
+   "over_threshold_zone_seconds": 1079.0,
+   "peak_density": 4.0,
+   "density_mae": 0.0056,
+   "density_max_error": 0.14738,
+   "blind_zone_mae": 0.00994,
+   "blind_zone_max_error": 0.043919999999999994,
+   "forecast_mae": 0.07664,
+   "true_compliance": 0.4988476376350345,
+   "estimated_compliance": 0.507,
+   "runs": 5
+  },
+  "closed-guided-p0.65": {
+   "t90_s": 875.8,
+   "t100_s": 1301.0,
+   "over_threshold_zone_seconds": 805.8,
+   "peak_density": 4.0,
+   "density_mae": 0.00606,
+   "density_max_error": 0.14904,
+   "blind_zone_mae": 0.011100000000000002,
+   "blind_zone_max_error": 0.0464,
+   "forecast_mae": 0.07678,
+   "true_compliance": 0.6507699703987614,
+   "estimated_compliance": 0.6538,
+   "runs": 5
+  },
+  "closed-guided-p0.80": {
+   "t90_s": 837.2,
+   "t100_s": 1264.8,
+   "over_threshold_zone_seconds": 922.2,
+   "peak_density": 4.0,
+   "density_mae": 0.00544,
+   "density_max_error": 0.1538,
+   "blind_zone_mae": 0.00592,
+   "blind_zone_max_error": 0.04542,
+   "forecast_mae": 0.07702,
+   "true_compliance": 0.8031928456394312,
+   "estimated_compliance": 0.7792000000000001,
+   "runs": 5
+  }
+ },
+ "criterion_a_density_error_max": 0.1858,
+ "criterion_b_guided_better_every_seed": {
+  "0.2": true,
+  "0.35": true,
+  "0.5": true,
+  "0.65": true,
+  "0.8": true
+ },
+ "criterion_c_lowest_effective_p": 0.2
+}

@@ -1,0 +1,169 @@
+{
+ "note": "Kai Tak Stadium spectator gates, static copy for the indoor twin (AGENTS.md: OSM venue base may be imported as static material with its source recorded).",
+ "copied_from": "03_Group_Project_KaiTak/Community_Accessibility_DT/data/processed/transit/gates_candidates.geojson",
+ "copied_on": "2026-11-24",
+ "source": "OpenStreetMap via Overpass, retrieved 2026-10-27, ODbL 1.0 (c) OpenStreetMap contributors",
+ "status": "provisional: gate letters and positions not confirmed by the leader or an official KTSP plan",
+ "gates": [
+  {
+   "ref": "A",
+   "name": "Kai Tak Stadium Gate A",
+   "local_xy": [
+    280.5,
+    -287.4
+   ],
+   "lonlat": [
+    114.1982227,
+    22.3213368
+   ],
+   "osm_id": "n13122941483",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "B",
+   "name": "Kai Tak Stadium Gate B",
+   "local_xy": [
+    195.5,
+    -330.9
+   ],
+   "lonlat": [
+    114.1973981,
+    22.320944
+   ],
+   "osm_id": "n13122941481",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "C",
+   "name": "Kai Tak Stadium Gate C",
+   "local_xy": [
+    103.9,
+    -287.2
+   ],
+   "lonlat": [
+    114.1965091,
+    22.3213389
+   ],
+   "osm_id": "n13122941482",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "D",
+   "name": "Kai Tak Stadium Gate D",
+   "local_xy": [
+    87.1,
+    -252.9
+   ],
+   "lonlat": [
+    114.1963454,
+    22.3216486
+   ],
+   "osm_id": "n5769543348",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "E",
+   "name": "Kai Tak Stadium Gate E",
+   "local_xy": [
+    79.4,
+    -142.6
+   ],
+   "lonlat": [
+    114.1962712,
+    22.3226446
+   ],
+   "osm_id": "n13122941487",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "F",
+   "name": "Kai Tak Stadium Gate F",
+   "local_xy": [
+    117.1,
+    -73.4
+   ],
+   "lonlat": [
+    114.1966368,
+    22.3232693
+   ],
+   "osm_id": "n5769543336",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "G",
+   "name": "Kai Tak Stadium Gate G",
+   "local_xy": [
+    194.5,
+    -49.7
+   ],
+   "lonlat": [
+    114.1973884,
+    22.3234836
+   ],
+   "osm_id": "n13122941488",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "H",
+   "name": "Kai Tak Stadium Gate H",
+   "local_xy": [
+    281.1,
+    -85.9
+   ],
+   "lonlat": [
+    114.1982289,
+    22.3231566
+   ],
+   "osm_id": "n13122941489",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "J",
+   "name": "Kai Tak Stadium Gate J",
+   "local_xy": [
+    301.8,
+    -147.3
+   ],
+   "lonlat": [
+    114.1984301,
+    22.3226014
+   ],
+   "osm_id": "n13122941486",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  },
+  {
+   "ref": "K",
+   "name": "Kai Tak Stadium Gate K",
+   "local_xy": [
+    300.6,
+    -245.7
+   ],
+   "lonlat": [
+    114.1984182,
+    22.3217135
+   ],
+   "osm_id": "n13122941485",
+   "level": "2",
+   "confidence": "medium",
+   "provisional": true
+  }
+ ]
+}
