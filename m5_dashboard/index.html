@@ -1,93 +1,179 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kai Tak Stadium · Egress Twin</title>
+  <title>Kai Tak Stadium | Egress Twin</title>
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search);
+        var t = q.get('theme') || localStorage.getItem('kaitak.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        var l = q.get('lang') || localStorage.getItem('kaitak.lang');
+        if (l === 'zh') document.documentElement.lang = 'zh-CN';
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
   <canvas id="scene"></canvas>
-  <div id="loading"><div class="ring"></div><span id="loading-text">Loading venue model</span></div>
+  <div id="loading"><div class="ring"></div><span id="loading-text" data-i18n="loadingModel">Loading venue model</span></div>
 
   <header id="top">
-    <div class="brand">
-      <div class="mark"></div>
-      <div>
-        <h1>Kai Tak Main Stadium</h1>
-        <p>Concert egress twin · <span id="scope"></span></p>
-      </div>
-    </div>
     <div id="kpis"></div>
-    <div id="status"><span class="dot"></span><span id="status-text">Connecting</span></div>
+    <div id="top-right">
+      <div class="toolbar" id="toolbar" role="group" aria-label="Display controls">
+        <div class="seg" id="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en">EN</button>
+          <button type="button" data-lang="zh">中</button>
+        </div>
+        <div class="seg" id="theme-switch" role="group" aria-label="Color theme">
+          <button type="button" data-theme="light" aria-label="Light mode" title="Light mode">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </button>
+          <button type="button" data-theme="dark" aria-label="Dark mode" title="Dark mode">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="status"><span class="dot"></span><span id="status-text">Connecting</span></div>
+    </div>
   </header>
 
-  <aside id="left" class="panel">
-    <h2>Scenario <small>testbed input</small></h2>
-    <label>Gate closed during egress
-      <select id="f-gate"></select>
-    </label>
-    <label>Crowd compliance <output id="o-p"></output>
-      <input id="f-p" type="range" min="0.2" max="0.8" step="0.05" value="0.5" />
-    </label>
-    <label>Approval
-      <select id="f-approval">
-        <option value="manual">Duty manager approves</option>
-        <option value="auto">Batch rule approves</option>
-        <option value="none">No guidance (baseline)</option>
-      </select>
-    </label>
-    <label>Speed
-      <select id="f-speed">
-        <option value="5">5× real time</option>
-        <option value="10">10×</option>
-        <option value="20">20×</option>
-        <option value="60">60×</option>
-      </select>
-    </label>
-    <label class="check"><input id="f-drop" type="checkbox" /> Camera outage at 3:20 for 2 min (C08, C10)</label>
-    <div class="row">
-      <button id="b-start" class="primary">Start egress</button>
-      <button id="b-stop" disabled>Stop</button>
-    </div>
-    <h2>View</h2>
-    <div class="row wrap" id="views"></div>
-    <label class="check"><input id="f-shell" type="checkbox" /> Show roof and facade</label>
-    <label class="check"><input id="f-fx" type="checkbox" checked /> Post-processing</label>
-    <div class="legend">
+  <div id="left-dock">
+    <section class="brand panel">
+      <div class="brand-head">
+        <div class="mark" aria-hidden="true"></div>
+        <div class="brand-titles">
+          <h1 data-i18n="brandTitle">Kai Tak Main Stadium</h1>
+          <div class="brand-sub-row">
+            <p class="brand-sub" data-i18n="brandSubtitle">Concert egress twin</p>
+            <span class="badge" id="scope-status"></span>
+          </div>
+        </div>
+      </div>
+      <div class="brand-meta" id="scope"></div>
+    </section>
+
+    <aside id="left" class="panel">
+      <div class="sec-head">
+        <h2 data-i18n="scenarioTitle">Scenario</h2>
+        <button type="button" class="info-btn" data-tip-key="tipScenario" aria-label="Info">i</button>
+      </div>
+      <div class="field">
+        <span class="field-label" data-i18n="gateClosedLabel">Gate closure</span>
+        <div class="select-wrap"><select id="f-gate"></select></div>
+      </div>
+      <div class="field">
+        <div class="field-top">
+          <span class="field-label" data-i18n="complianceLabel">Crowd compliance</span>
+          <output id="o-p"></output>
+        </div>
+        <input id="f-p" class="slider" type="range" min="0.2" max="0.8" step="0.05" value="0.5" />
+      </div>
+      <div class="field">
+        <span class="field-label" data-i18n="approvalLabel">Approval</span>
+        <div class="select-wrap">
+          <select id="f-approval">
+            <option value="manual" data-i18n="approvalManual">Duty manager approves</option>
+            <option value="auto" data-i18n="approvalAuto">Batch rule approves</option>
+            <option value="none" data-i18n="approvalNone">No guidance (baseline)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field inline-field">
+        <span class="field-label" data-i18n="speedLabel">Speed</span>
+        <div class="seg speed-seg" id="f-speed" role="group" aria-label="Speed">
+          <button type="button" data-speed="5">5×</button>
+          <button type="button" data-speed="10" class="active">10×</button>
+          <button type="button" data-speed="20">20×</button>
+          <button type="button" data-speed="60">60×</button>
+        </div>
+      </div>
+      <div class="field switch-row">
+        <span class="switch-label">
+          <span data-i18n="dropShort">Camera outage</span>
+          <button type="button" class="info-btn" data-tip-key="tipDrop" aria-label="Info">i</button>
+        </span>
+        <label class="switch"><input id="f-drop" type="checkbox" /><i></i></label>
+      </div>
+      <div class="row action-row">
+        <button id="b-start" class="primary" data-i18n="btnStart">Start egress</button>
+        <button id="b-stop" disabled data-i18n="btnStop">Stop</button>
+      </div>
+
+      <div class="sec-head section-sep">
+        <h2 data-i18n="viewTitle">View</h2>
+      </div>
+      <div class="row wrap" id="views"></div>
+      <div class="chip-toggles">
+        <label class="chip-toggle"><input id="f-shell" type="checkbox" /><span data-i18n="showShellShort">Roof &amp; facade</span></label>
+        <label class="chip-toggle"><input id="f-fx" type="checkbox" checked /><span data-i18n="postFxShort">Post-FX</span></label>
+      </div>
+    </aside>
+  </div>
+
+  <div id="map-legend" role="region" aria-label="Legend">
+    <div class="ramp-block" tabindex="0" data-tip-key="tipRamp" data-tip-pos="top">
       <div class="ramp"></div>
-      <div class="ticks"><span>0</span><span>1</span><span class="lim">2.2</span><span>4 p/m²</span></div>
-      <p><i class="sw dash"></i> Dashed: no camera, estimated</p>
-      <p><i class="sw grey"></i> Grey: camera data over 10 s old</p>
-      <p><i class="sw dots"></i> Dots: from zone counts, not tracked</p>
-      <p><i class="sw board"></i> Sign: approved message; red if its gate is closed</p>
+      <div class="ticks"><span>0</span><span class="lim">2.2</span><span data-i18n="legendMaxTick">4 p/m²</span></div>
     </div>
-  </aside>
+    <div class="leg-items">
+      <span class="leg-chip" tabindex="0" data-tip-key="legendDash" data-tip-pos="top"><i class="sw dash"></i><span data-i18n="legDashShort">Estimated</span></span>
+      <span class="leg-chip" tabindex="0" data-tip-key="legendGrey" data-tip-pos="top"><i class="sw grey"></i><span data-i18n="legGreyShort">Stale</span></span>
+      <span class="leg-chip" tabindex="0" data-tip-key="legendDots" data-tip-pos="top"><i class="sw dots"></i><span data-i18n="legDotsShort">Dots</span></span>
+      <span class="leg-chip" tabindex="0" data-tip-key="legendBoard" data-tip-pos="top"><i class="sw board"></i><span data-i18n="legBoardShort">Signs</span></span>
+    </div>
+  </div>
 
   <aside id="right" class="panel">
-    <h2>Guidance <small>M4 proposes, the duty manager decides</small></h2>
+    <div class="sec-head">
+      <h2 data-i18n="guidanceTitle">Guidance</h2>
+      <button type="button" class="info-btn" data-tip-key="tipGuidance" aria-label="Info">i</button>
+    </div>
     <div id="pending"></div>
-    <h2>Log</h2>
+    <h2 class="section-sep" data-i18n="logTitle">Log</h2>
     <ol id="log"></ol>
   </aside>
 
   <footer id="bottom">
     <section class="panel chart">
-      <h2>Highest density in walking zones <small>persons/m²</small></h2>
+      <div class="sec-head">
+        <h2><span data-i18n="chartTitle">Highest density in walking zones</span><small data-i18n="chartSub">persons/m²</small></h2>
+      </div>
       <div class="plot"><canvas id="chart"></canvas></div>
-      <div class="key"><span class="k now">Twin estimate</span><span class="k fc">2-min forecast</span><span class="k truth">Testbed truth (evaluation only)</span><span class="k lim">Limit 2.2</span></div>
+      <div class="key">
+        <span class="k now" data-i18n="keyNow">Twin estimate</span>
+        <span class="k fc" data-i18n="keyFc">2-min forecast</span>
+        <span class="k truth" data-i18n="keyTruth">Testbed truth (evaluation only)</span>
+        <span class="k lim" id="key-lim">Limit 2.2</span>
+      </div>
     </section>
     <section class="panel gates">
-      <h2>Gates <small>people counted in</small></h2>
+      <div class="sec-head">
+        <h2><span data-i18n="gatesTitle">Gates</span><small data-i18n="gatesSub">people counted in</small></h2>
+        <button type="button" class="info-btn" data-tip-key="tipGates" data-tip-pos="top" aria-label="Info">i</button>
+      </div>
       <div id="gates"></div>
     </section>
     <section class="panel eval">
-      <h2>Twin vs testbed <small>evaluation only</small></h2>
+      <div class="sec-head">
+        <h2><span data-i18n="evalTitle">Twin vs testbed</span><small data-i18n="evalSub">evaluation only</small></h2>
+        <button type="button" class="info-btn" data-tip-key="tipEval" data-tip-pos="top" aria-label="Info">i</button>
+      </div>
       <div id="eval"></div>
     </section>
   </footer>
 
   <div id="tip"></div>
+  <div id="popover" role="tooltip"></div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
