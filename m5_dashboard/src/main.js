@@ -357,6 +357,7 @@ function renderPending(force = false) {
       box.dataset.id = ''
       box.innerHTML = `<div class="empty">${esc(run?.config.approval === 'none' ? s.guidanceOff : s.guidanceEmpty)}</div>`
     }
+    clearProposalPreview()
     return
   }
   const left = Math.max(0, 1 - (state.t_s - g.created_t_s) / 120)
@@ -375,11 +376,12 @@ function renderPending(force = false) {
     const people = g.assignments.filter((a) => d.serves.includes(a.zone_id) && a.to_gate === m.gate_id).reduce((acc, a) => acc + a.people, 0)
     const from = g.assignments.find((a) => d.serves.includes(a.zone_id))?.from_gate
     const checkedAttr = unchecked.has(m.display_id) ? '' : 'checked'
-    return `<tr><td class="drop"><input type="checkbox" ${checkedAttr} data-display="${esc(m.display_id)}" data-zones="${d.serves.join(',')}" title="${esc(s.untickTip)}" /></td>
+    return `<tr class="${checkedAttr ? '' : 'dropped'}"><td class="drop"><input type="checkbox" ${checkedAttr} data-display="${esc(m.display_id)}" data-gate-ref="${esc(m.gate_ref)}" data-zones="${d.serves.join(',')}" title="${esc(s.untickTip)}" /></td>
       <td>${short(m.display_id)} <small>${zonesServed}</small></td>
       <td><span class="gate">${manifest.zones[from]?.gate_ref ?? '?'}</span> → <span class="gate to">${m.gate_ref}</span></td><td>${people}</td></tr>`
   }).join('')
   box.innerHTML = `<div class="card proposed"><div class="why">${esc(why)}</div><div class="sub">${esc(plan ?? '')}</div>
+    <div class="preview-pill" id="preview-pill"></div>
     <div class="ttl"><i style="width:${left * 100}%"></i></div><table>${rows}</table>
     <div class="row"><button class="approve">${esc(s.btnApprove)}</button><button class="reject">${esc(s.btnReject)}</button><button class="show">${esc(s.btnShow)}</button></div></div>`
   const decide = (action) => {
@@ -390,6 +392,7 @@ function renderPending(force = false) {
   box.querySelector('.approve').onclick = () => decide('approve')
   box.querySelector('.reject').onclick = () => decide('reject')
   box.querySelector('.show').onclick = () => manifest.zones[g.trigger_zone] && focusZone(g.trigger_zone)
+  syncProposalPreview()
 }
 
 function renderEval() {
@@ -588,6 +591,44 @@ for (const b of document.querySelectorAll('#theme-switch button')) {
 // ------------------------------------------------------------------ P2 chart, zone inspector and baseline
 
 // ------------------------------------------------------------------ P3 proposal preview
+function syncProposalPreview() {
+  const box = $('pending')
+  const inputs = [...box.querySelectorAll('input[data-display]')]
+  if (!inputs.length) {
+    clearProposalPreview()
+    return
+  }
+  const ids = []
+  const targets = {}
+  for (const input of inputs) {
+    const tr = input.closest('tr')
+    if (tr) tr.classList.toggle('dropped', !input.checked)
+    if (input.checked) {
+      ids.push(input.dataset.display)
+      if (input.dataset.gateRef) targets[input.dataset.display] = input.dataset.gateRef
+    }
+  }
+  overlay.setPreview(ids, targets)
+  const pill = $('preview-pill')
+  if (pill) {
+    const s = T()
+    pill.textContent = ids.length ? s.previewActive(ids.length, inputs.length) : s.previewNone
+    pill.classList.toggle('off', ids.length === 0)
+  }
+}
+
+function clearProposalPreview() {
+  overlay.setPreview([])
+}
+
+$('pending').addEventListener('change', (e) => {
+  if (e.target.matches('input[data-display]')) syncProposalPreview()
+})
+
+hooks.run.push((r, { fresh, resumed }) => {
+  if (r.status !== 'running' || (fresh && !resumed)) clearProposalPreview()
+  else syncProposalPreview()
+})
 
 window.twin = { view, overlay, manifest, setLang, setTheme, getLang: () => lang, getTheme: () => theme }
 window.addEventListener('resize', drawChart)

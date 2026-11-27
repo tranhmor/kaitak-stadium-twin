@@ -421,6 +421,152 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   // ---- P2 chart, zone inspector and baseline
 
   // ---- P3 proposal preview
+  const PREVIEW_THEMES = {
+    dark: {
+      frame: new THREE.Color('#ffb347').multiplyScalar(1.75),
+      outline: new THREE.Color('#ffb347').multiplyScalar(1.9),
+      surfaceTint: new THREE.Color('#ffb347'),
+      surfaceMix: 0.36,
+      surfaceOpacityBoost: 0.14,
+      sprite: { colour: '#fff7e6', bg: 'rgba(130,68,6,0.94)', border: '#ffb347' },
+    },
+    light: {
+      frame: new THREE.Color('#d97706').multiplyScalar(1.15),
+      outline: new THREE.Color('#d97706').multiplyScalar(1.15),
+      surfaceTint: new THREE.Color('#f59e0b'),
+      surfaceMix: 0.34,
+      surfaceOpacityBoost: 0.16,
+      sprite: { colour: '#fffbeb', bg: 'rgba(180,83,9,0.95)', border: '#fcd34d' },
+    },
+  }
+  const previewGroup = new THREE.Group()
+  previewGroup.visible = false
+  root.add(previewGroup)
+  const previewFrameMat = new THREE.MeshBasicMaterial({ color: PREVIEW_THEMES[currentTheme].frame.clone(), transparent: true, opacity: 0.92, depthWrite: false })
+  const previewBarH = new THREE.BoxGeometry(3.8, 0.26, 0.52)
+  const previewBarV = new THREE.BoxGeometry(0.26, 1.5, 0.52)
+  const previewPin = new THREE.BoxGeometry(0.14, 1.35, 0.14)
+  const previewNodes = {}
+  let previewDisplays = new Map() // displayId -> gateRef | null
+  let previewZones = new Set()
+  let previewSignature = ''
+
+  function ensurePreviewNode(id) {
+    if (previewNodes[id]) return previewNodes[id]
+    const b = boards[id]
+    const g = new THREE.Group()
+    g.visible = false
+    const frame = new THREE.Group()
+    frame.position.copy(b.mesh.position)
+    frame.rotation.copy(b.mesh.rotation)
+    const addBar = (geo, x, y) => {
+      const mesh = new THREE.Mesh(geo, previewFrameMat)
+      mesh.position.set(x, y, 0)
+      mesh.renderOrder = 14
+      frame.add(mesh)
+    }
+    addBar(previewBarH, 0, 0.88)
+    addBar(previewBarH, 0, -0.88)
+    addBar(previewBarV, -1.77, 0)
+    addBar(previewBarV, 1.77, 0)
+    addBar(previewPin, 0, 1.68)
+    g.add(frame)
+    const tag = sprite('?', 2.9, PREVIEW_THEMES[currentTheme].sprite)
+    tag.renderOrder = 22
+    tag.position.copy(b.mesh.position)
+    tag.position.y += 3.0
+    g.add(tag)
+    previewGroup.add(g)
+    previewNodes[id] = { group: g, frame, sprite: tag, text: '?', theme: currentTheme, baseY: b.mesh.position.y + 3.0 }
+    return previewNodes[id]
+  }
+
+  function applyPreviewStyle() {
+    const pt = PREVIEW_THEMES[currentTheme]
+    previewFrameMat.color.copy(pt.frame)
+    if (!previewDisplays.size) return
+    for (const [id, gateRef] of previewDisplays) {
+      const node = ensurePreviewNode(id)
+      const text = gateRef ? `? → ${gateRef}` : '?'
+      if (node.text !== text || node.theme !== currentTheme) {
+        updateSprite(node.sprite, text, pt.sprite)
+        node.text = text
+        node.theme = currentTheme
+      }
+      node.baseY = boards[id].mesh.position.y + (boards[id].shown ? 5.5 : 3.0)
+      node.sprite.position.y = node.baseY
+      node.group.visible = true
+    }
+    for (const zid of previewZones) {
+      const line = outline[zid]?.material
+      if (line) {
+        line.color.copy(pt.outline)
+        line.needsUpdate = true
+      }
+      const mat = surface[zid]?.material
+      if (mat) {
+        mat.color.lerp(pt.surfaceTint, pt.surfaceMix)
+        mat.opacity = Math.min(0.58, mat.opacity + pt.surfaceOpacityBoost)
+      }
+    }
+  }
+
+  applyHooks.push(() => applyPreviewStyle())
+
+  view.onFrame((dt, t) => {
+    if (!previewDisplays.size) return
+    const wave = 0.5 + 0.5 * Math.sin(t * 4.5)
+    previewFrameMat.opacity = 0.66 + 0.34 * wave
+    const scale = 1 + 0.045 * (wave - 0.5)
+    const bob = 0.24 * Math.sin(t * 4.5)
+    for (const id of previewDisplays.keys()) {
+      const node = previewNodes[id]
+      if (!node || !node.group.visible) continue
+      node.frame.scale.set(scale, scale, 1)
+      node.sprite.position.y = node.baseY + bob
+    }
+    for (const zid of previewZones) {
+      const line = outline[zid]
+      if (!line) continue
+      line.material.opacity = zid === focus ? 1 : 0.72 + 0.28 * wave
+      line.material.linewidth = zid === focus ? 4.2 : 3.2
+    }
+  })
+
+  function setPreview(displayIds, targets = null) {
+    const nextMap = new Map()
+    const list = Array.isArray(displayIds) ? displayIds : []
+    for (const item of list) {
+      const id = typeof item === 'string' ? item : item?.display_id
+      if (!id || !boards[id]) continue
+      let ref = typeof item === 'object' && item ? item.gate_ref ?? null : null
+      if (!ref && targets) {
+        ref = targets instanceof Map ? targets.get(id) ?? null : targets[id] ?? null
+      }
+      if (!ref && typeof item === 'object' && item?.gate_id && manifest.gates[item.gate_id]) {
+        ref = manifest.gates[item.gate_id].ref
+      }
+      nextMap.set(id, ref)
+    }
+    const sig = [...nextMap.entries()].map(([k, v]) => `${k}:${v ?? ''}`).sort().join('|')
+    if (sig === previewSignature) return
+    previewSignature = sig
+    previewDisplays = nextMap
+    previewZones = new Set()
+    for (const id of previewDisplays.keys()) {
+      for (const zid of manifest.displays[id]?.serves ?? []) {
+        if (outline[zid]) previewZones.add(zid)
+      }
+    }
+    for (const [id, node] of Object.entries(previewNodes)) {
+      node.group.visible = previewDisplays.has(id)
+    }
+    previewGroup.visible = previewDisplays.size > 0
+    if (state) apply(state)
+    else applyIdleLook()
+  }
+
+  const getPreview = () => ({ displays: [...previewDisplays.keys()], zones: [...previewZones] })
 
   const centre = (id) => toScene(...zones[id].centroid).toArray()
   return {
@@ -428,6 +574,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     // P2
 
     // P3
+    setPreview, getPreview,
 
   }
 }

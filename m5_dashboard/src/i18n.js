@@ -193,6 +193,8 @@ export const STRINGS = {
     // P2 chart, zone inspector and baseline
 
     // P3 proposal preview
+    previewActive: (selected, total) => `3D preview: ${selected}/${total} displays (amber)`,
+    previewNone: '3D preview: none selected',
   },
 
   zh: {
@@ -352,6 +354,8 @@ export const STRINGS = {
     // P2 chart, zone inspector and baseline
 
     // P3 proposal preview
+    previewActive: (selected, total) => `3D 预演：${selected}/${total} 块显示屏（琥珀色高亮）`,
+    previewNone: '3D 预演：未勾选任何显示屏',
   },
 }
 
