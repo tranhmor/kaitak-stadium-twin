@@ -336,15 +336,25 @@ function renderKpis() {
 function renderGates() {
   const s = T()
   if (!state) {
-    $('gates').innerHTML = Object.values(manifest.gates).map((g) =>
-      `<div class="g idle"><b>${esc(s.gateLabel(g.ref))}</b><div class="bar"><i style="width:0%"></i></div><span>—</span></div>`
+    $('gates').innerHTML = Object.entries(manifest.gates).map(([id, g]) =>
+      `<div class="g idle"><b>${esc(s.gateLabel(g.ref))}</b><div class="bar"><i style="width:0%"></i></div><span>—</span><button type="button" class="gate-btn close" data-gate="${esc(id)}" data-next="closed" disabled title="${esc(s.gateRunOnlyTip)}">${esc(s.gateBtnClose)}</button></div>`
     ).join('')
     return
   }
+  const live = run?.status === 'running'
   const total = Math.max(1, ...Object.values(state.gate_arrivals))
+  const openCount = countEffectiveOpenGates(state.facilities)
   $('gates').innerHTML = Object.entries(manifest.gates).map(([id, g]) => {
-    const n = state.gate_arrivals[id] ?? 0, closed = state.facilities[id] === 'closed'
-    return `<div class="g ${closed ? 'closed' : ''}"><b>${esc(s.gateLabel(g.ref))}</b><div class="bar"><i style="width:${(n / total) * 100}%"></i></div><span>${closed ? esc(s.gateClosedState) : fmtNum(Math.round(n))}</span></div>`
+    const n = state.gate_arrivals[id] ?? 0
+    const closed = state.facilities[id] === 'closed'
+    const pending = gateInFlight.has(id)
+    const lastOpen = !closed && openCount <= 1
+    const disabled = !live || pending || lastOpen
+    const tip = !live ? s.gateRunOnlyTip : lastOpen ? s.gateLastOpenTip : ''
+    const cls = closed ? 'reopen' : 'close'
+    const label = closed ? s.gateBtnReopen : s.gateBtnClose
+    const next = closed ? 'open' : 'closed'
+    return `<div class="g ${closed ? 'closed' : ''}"><b>${esc(s.gateLabel(g.ref))}</b><div class="bar"><i style="width:${(n / total) * 100}%"></i></div><span>${closed ? esc(s.gateClosedState) : fmtNum(Math.round(n))}</span><button type="button" class="gate-btn ${cls}" data-gate="${esc(id)}" data-next="${next}"${disabled ? ' disabled' : ''}${tip ? ` title="${esc(tip)}"` : ''}>${esc(label)}</button></div>`
   }).join('')
 }
 
@@ -584,6 +594,69 @@ for (const b of document.querySelectorAll('#theme-switch button')) {
 }
 
 // ------------------------------------------------------------------ P1 gate controls
+const gateInFlight = new Map() // zone_id -> { target: 'closed' | 'open', resolved: boolean, statesSeen: number }
+
+function countEffectiveOpenGates(facilities) {
+  let count = 0
+  for (const id of Object.keys(manifest.gates)) {
+    const isClosed = facilities?.[id] === 'closed' || gateInFlight.get(id)?.target === 'closed'
+    if (!isClosed) count += 1
+  }
+  return count
+}
+
+hooks.state.push((s) => {
+  for (const [id, entry] of gateInFlight) {
+    if (s.facilities[id] === entry.target) {
+      gateInFlight.delete(id)
+    } else if (entry.resolved) {
+      entry.statesSeen += 1
+      if (entry.statesSeen >= 2) gateInFlight.delete(id)
+    }
+  }
+})
+
+hooks.run.push((r, { fresh }) => {
+  if ((fresh || r.status !== 'running') && gateInFlight.size) {
+    gateInFlight.clear()
+    renderGates()
+  }
+})
+
+$('gates').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button.gate-btn[data-gate]')
+  if (!btn || btn.disabled) return
+  if (run?.status !== 'running' || !state) return
+  const id = btn.dataset.gate
+  const nextStatus = btn.dataset.next
+  if (nextStatus !== 'closed' && nextStatus !== 'open') return
+  if (gateInFlight.has(id)) return
+  if (nextStatus === 'closed' && countEffectiveOpenGates(state.facilities) <= 1) return
+
+  const runId = run.run_id
+  const entry = { target: nextStatus, resolved: false, statesSeen: 0 }
+  gateInFlight.set(id, entry)
+  renderGates()
+  try {
+    await json(`/api/facilities/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ status: nextStatus, by: 'duty manager' }),
+    })
+    if (gateInFlight.get(id) === entry) {
+      if (run?.run_id !== runId || run?.status !== 'running' || state?.facilities?.[id] === nextStatus) {
+        gateInFlight.delete(id)
+        renderGates()
+      } else {
+        entry.resolved = true
+      }
+    }
+  } catch (err) {
+    if (gateInFlight.get(id) === entry) gateInFlight.delete(id)
+    pushLog({ t: state?.t_s ?? 0, kind: 'error', message: err.message, cls: 'rejected' })
+    renderGates()
+  }
+})
 
 // ------------------------------------------------------------------ P2 chart, zone inspector and baseline
 

@@ -189,6 +189,10 @@ export const STRINGS = {
     spriteGateClosed: (ref) => `GATE ${ref} CLOSED`,
 
     // P1 gate controls
+    gateBtnClose: 'Close',
+    gateBtnReopen: 'Reopen',
+    gateLastOpenTip: 'At least one gate must remain open',
+    gateRunOnlyTip: 'Start a run to control gates',
 
     // P2 chart, zone inspector and baseline
 
@@ -348,6 +352,10 @@ export const STRINGS = {
     spriteGateClosed: (ref) => `闸口 ${ref} 已关闭`,
 
     // P1 gate controls
+    gateBtnClose: '关闭',
+    gateBtnReopen: '重开',
+    gateLastOpenTip: '至少须保留一个开放闸口',
+    gateRunOnlyTip: '运行散场后可控制闸口',
 
     // P2 chart, zone inspector and baseline
 
