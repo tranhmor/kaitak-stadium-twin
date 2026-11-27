@@ -276,3 +276,9 @@ button.on { border-color: var(--accent); color: var(--accent); }
 #loading.done { opacity: 0; pointer-events: none; }
 .ring { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* P1 gate controls */
+
+/* P2 chart, zone inspector and baseline */
+
+/* P3 proposal preview */

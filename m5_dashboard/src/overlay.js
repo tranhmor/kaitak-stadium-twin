@@ -279,6 +279,9 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
 
   // ---- state
   let state = null, focus = null
+  // apply() and applyIdleLook() restyle every zone and board; branches that add their own styling on top
+  // register here (or through onApply) instead of editing those two functions. Called with the state, or null when idle.
+  const applyHooks = []
   function apply(next) {
     state = next
     let n = 0
@@ -331,6 +334,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
       if (gate) b.sprites[gate].visible = true
       b.shown = gate
     }
+    for (const f of applyHooks) f(next)
   }
 
   function applyIdleLook() {
@@ -343,6 +347,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     for (const b of Object.values(boards)) {
       if (!b.shown) b.mesh.material.color.set(P.boardIdle)
     }
+    for (const f of applyHooks) f(null)
   }
 
   function reset() {
@@ -413,6 +418,16 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     return focus
   }
 
+  // ---- P2 chart, zone inspector and baseline
+
+  // ---- P3 proposal preview
+
   const centre = (id) => toScene(...zones[id].centroid).toArray()
-  return { apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance }
+  return {
+    apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f),
+    // P2
+
+    // P3
+
+  }
 }

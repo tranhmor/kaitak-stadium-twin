@@ -7,7 +7,7 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 
-m5_dashboard/node_modules/
+m5_dashboard/node_modules
 m5_dashboard/dist/
 m5_dashboard/tools/shots/
 

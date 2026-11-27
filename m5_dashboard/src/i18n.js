@@ -187,6 +187,12 @@ export const STRINGS = {
     // 3D sprite labels
     spriteGateOpen: (ref) => `GATE ${ref}`,
     spriteGateClosed: (ref) => `GATE ${ref} CLOSED`,
+
+    // P1 gate controls
+
+    // P2 chart, zone inspector and baseline
+
+    // P3 proposal preview
   },
 
   zh: {
@@ -340,6 +346,12 @@ export const STRINGS = {
     // 3D sprite labels
     spriteGateOpen: (ref) => `闸口 ${ref}`,
     spriteGateClosed: (ref) => `闸口 ${ref} 已关闭`,
+
+    // P1 gate controls
+
+    // P2 chart, zone inspector and baseline
+
+    // P3 proposal preview
   },
 }
 

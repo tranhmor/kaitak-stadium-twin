@@ -150,6 +150,13 @@ let run = null, state = null, truth = null, series = [], guidance = new Map(), l
 let wsState = 'connecting' // 'connecting' | 'open' | 'offline'
 let hoveredZone = null
 
+// Extension points for the parallel dashboard branches (docs/platform_tasks.md). Each branch registers callbacks
+// in its own section at the end of this file instead of editing onState, onRun, setLang or setTheme.
+//   hooks.state       (state)                     after the state is added to `series`, before the panels redraw
+//   hooks.run         (run, { fresh, resumed })   after a run starts, resumes or ends, once the panels have redrawn
+//   hooks.appearance  ({ lang, theme })           after the language or the theme has changed
+const hooks = { state: [], run: [], appearance: [] }
+
 $('b-start').onclick = async () => {
   const drop = $('f-drop').checked
   await post('/api/runs', {
@@ -225,6 +232,7 @@ async function onRun(r, resumed = false) {
     })
   }
   setStatus(); renderPending(true); renderGates(); renderEval(); renderKpis(); renderLog(); drawChart()
+  for (const f of hooks.run) f(r, { fresh, resumed })
 }
 
 function onState(s) {
@@ -232,6 +240,7 @@ function onState(s) {
   state = window.twinState = s
   overlay.apply(s)
   series.push({ t: s.t_s, now: s.kpis.max_density, fc: s.kpis.max_forecast_density })
+  for (const f of hooks.state) f(s)
   renderKpis(); renderGates(); renderPending(); drawChart()
   if (hoveredZone) renderTooltip(hoveredZone)
 }
@@ -552,6 +561,7 @@ function setLang(next) {
   renderLog()
   drawChart()
   if (hoveredZone) renderTooltip(hoveredZone)
+  for (const f of hooks.appearance) f({ lang, theme })
 }
 
 function setTheme(next) {
@@ -563,6 +573,7 @@ function setTheme(next) {
   view.setTheme(theme)
   overlay.setAppearance({ theme })
   drawChart()
+  for (const f of hooks.appearance) f({ lang, theme })
 }
 
 for (const b of document.querySelectorAll('#lang-switch button')) {
@@ -571,6 +582,12 @@ for (const b of document.querySelectorAll('#lang-switch button')) {
 for (const b of document.querySelectorAll('#theme-switch button')) {
   b.onclick = () => setTheme(b.dataset.theme)
 }
+
+// ------------------------------------------------------------------ P1 gate controls
+
+// ------------------------------------------------------------------ P2 chart, zone inspector and baseline
+
+// ------------------------------------------------------------------ P3 proposal preview
 
 window.twin = { view, overlay, manifest, setLang, setTheme, getLang: () => lang, getTheme: () => theme }
 window.addEventListener('resize', drawChart)
