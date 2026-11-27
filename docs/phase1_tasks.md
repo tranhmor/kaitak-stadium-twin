@@ -2,6 +2,16 @@
 
 依据：`docs/execution_plan_v0.2.md`。分支起点：`main` 上的 T0 提交。每个任务一个分支、一个 agent，做完由主线程按第 4 节的顺序合并检查。
 
+## 状态（2026-11-27）
+
+- `phase1/T1`–`T6` 的分支和 worktree 已删除，删除前都没有提交和改动。
+- T2 的回归部分已在 `main` 上完成：
+  - `tests/test_regression.py` 已建好，参照冻结在 `tests/data/meso_runs_v0.1.csv`（与 `testbed/results/runs.csv` 相同）。
+  - `testbed/meso.py` 已改从 `venue.out_dir` 读出生点。
+  - T2 只剩 `crowd.py`，即第 4–6 步。
+- T6 移到平台线，分支 `twin/P4-m1-presets`。规格仍以本文件的 T6 为准，差别见 `docs/platform_tasks.md` 的 P4。
+- 评测线 T1、T2（`crowd.py`）、T3、T4、T5 目前没有负责人。它们对应执行方案里标"必须"的 S0、A、B。组里要么定负责人和日期，要么记为对 v7.5 的范围调整。重新开工时按本文件建分支 `phase1/<任务号>-<名称>`。
+
 ## 0. 开工前已完成（T0，在 `main` 上）
 
 | 项 | 文件 | 内容 |
