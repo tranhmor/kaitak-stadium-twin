@@ -312,3 +312,10 @@ button.on { border-color: var(--accent); color: var(--accent); }
 #bottom .panel.chart, #bottom .panel.eval { min-height: 0; }
 
 /* P3 proposal preview */
+.preview-pill { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 8px; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--warn); background: rgba(255, 179, 71, 0.14); border: 1px solid rgba(255, 179, 71, 0.45); }
+.preview-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 6px var(--warn); flex: none; }
+.preview-pill.off { color: var(--dim); background: var(--seg-bg); border-color: var(--line); font-weight: 500; }
+.preview-pill.off::before { background: var(--dim); box-shadow: none; }
+:root[data-theme="light"] .preview-pill:not(.off) { background: rgba(217, 119, 6, 0.12); border-color: rgba(217, 119, 6, 0.42); }
+.card tr.dropped td { opacity: 0.46; }
+.card tr.dropped td:nth-child(2) { text-decoration: line-through; }
