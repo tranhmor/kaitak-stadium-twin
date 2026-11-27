@@ -215,6 +215,11 @@ export const STRINGS = {
     // P3 proposal preview
     previewActive: (selected, total) => `3D preview: ${selected}/${total} displays (amber)`,
     previewNone: '3D preview: none selected',
+
+    // stage layout (M1 presets)
+    layoutLabel: 'Stage layout',
+    layoutTip: 'Switch while no run is live. South end: the stage, the seats it blocks and the floor seats are mirrored north-south; a hypothetical scenario.',
+    statusHypothetical: 'Hypothetical',
   },
 
   zh: {
@@ -396,6 +401,11 @@ export const STRINGS = {
     // P3 proposal preview
     previewActive: (selected, total) => `3D 预演：${selected}/${total} 块显示屏（琥珀色高亮）`,
     previewNone: '3D 预演：未勾选任何显示屏',
+
+    // 舞台构型（M1 预设）
+    layoutLabel: '舞台构型',
+    layoutTip: '没有运行时才能切换。南端：舞台、被舞台挡住的座位和内场座椅按南北方向镜像，是假设场景。',
+    statusHypothetical: '假设场景',
   },
 }
 

@@ -172,6 +172,19 @@ export function createScene(canvas, manifest, initialTheme = 'dark') {
   scene.add(venue)
   const themedMeshes = []
 
+  // ---- stage presets: the stage, its screens and the floor seats sit in one group. M1 `mode: mirror` mirrors them
+  // north-south about the east-west line through the centre of the concert floor, the same axis M1 uses for the
+  // floor zones and spawn points, so the 3D stage and seats line up with the live layer. The stands never move.
+  const [, PY] = manifest.frame.pitch_centre ?? manifest.frame.bowl_centre
+  const stageMirror = new THREE.Group()
+  stageMirror.position.z = CY - PY                                          // that line, in scene axes (z = -(y - CY))
+  const stageContent = new THREE.Group()
+  stageContent.position.z = PY - CY                                         // identity transform until mirrored
+  stageMirror.add(stageContent)
+  scene.add(stageMirror)
+  const FLOOR_SEAT_Z = 3.0                                                   // m1_venue/config.yaml floor.z_max
+  const setStageMode = (mode) => { stageMirror.scale.z = mode === 'mirror' ? -1 : 1 }
+
   const applyMeshLook = (mesh, theme) => {
     const table = LOOK_THEMES[theme]
     const spec = table[mesh.userData.lookKey] ?? table._fallback
@@ -192,6 +205,7 @@ export function createScene(canvas, manifest, initialTheme = 'dark') {
     const draco = new DRACOLoader().setDecoderPath('/draco/')
     const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(url)
     const table = LOOK_THEMES[currentTheme]
+    const stageMeshes = []
     gltf.scene.traverse((o) => {
       if (!o.isMesh) return
       const keyName = table[o.name] ? o.name : table[o.parent?.name] ? o.parent.name : '_fallback'
@@ -205,8 +219,11 @@ export function createScene(canvas, manifest, initialTheme = 'dark') {
       o.receiveShadow = o.name !== 'ctx_windows' && o.name !== 'stage_screens'
       o.geometry.computeVertexNormals()
       themedMeshes.push(o)
+      if (keyName === 'stage' || keyName === 'stage_screens') stageMeshes.push(o)
     })
     venue.add(gltf.scene)
+    scene.updateMatrixWorld(true)
+    for (const m of stageMeshes) stageContent.attach(m)                     // keeps its world position
     draco.dispose()
   }
 
@@ -214,18 +231,22 @@ export function createScene(canvas, manifest, initialTheme = 'dark') {
     const data = new Float32Array(await (await fetch(url)).arrayBuffer())
     const n = data.length / 5
     const seat = new THREE.BoxGeometry(0.46, 0.5, 0.46).translate(0, 0.25, 0)
-    const mesh = new THREE.InstancedMesh(seat, clip(new THREE.MeshStandardMaterial({ roughness: 0.75 }), 'upper'), n)
     const palette = SEAT_COLOURS.map((c) => new THREE.Color(c).multiplyScalar(0.8))
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), s = new THREE.Vector3(1, 1, 1), up = new THREE.Vector3(0, 1, 0)
-    for (let i = 0; i < n; i++) {
-      toScene(data[i * 5], data[i * 5 + 1], data[i * 5 + 2], p)
-      m.compose(p, q.setFromAxisAngle(up, data[i * 5 + 3]), s)
-      mesh.setMatrixAt(i, m)
-      mesh.setColorAt(i, palette[data[i * 5 + 4] | 0])
+    const stands = [], floor = []
+    for (let i = 0; i < n; i++) (data[i * 5 + 2] < FLOOR_SEAT_Z ? floor : stands).push(i)
+    for (const [idx, parent] of [[stands, scene], [floor, stageContent]]) {      // floor seats follow the stage preset
+      const mesh = new THREE.InstancedMesh(seat, clip(new THREE.MeshStandardMaterial({ roughness: 0.75 }), 'upper'), idx.length)
+      idx.forEach((i, k) => {
+        toScene(data[i * 5], data[i * 5 + 1], data[i * 5 + 2], p)
+        m.compose(p, q.setFromAxisAngle(up, data[i * 5 + 3]), s)
+        mesh.setMatrixAt(k, m)
+        mesh.setColorAt(k, palette[data[i * 5 + 4] | 0])
+      })
+      mesh.receiveShadow = true
+      mesh.frustumCulled = false
+      parent.add(mesh)
     }
-    mesh.receiveShadow = true
-    mesh.frustumCulled = false
-    scene.add(mesh)
     return n
   }
 
@@ -308,5 +329,9 @@ export function createScene(canvas, manifest, initialTheme = 'dark') {
     composer.setSize(window.innerWidth, window.innerHeight)
   })
 
-  return { THREE, renderer, scene, camera, controls, toScene, loadVenue, loadSeats, setCutaway, setFx, setTheme, flyTo, onFrame: (f) => updaters.push(f) }
+  const onFrame = (f) => {                                                 // returns a function that unregisters f
+    updaters.push(f)
+    return () => { const i = updaters.indexOf(f); if (i >= 0) updaters.splice(i, 1) }
+  }
+  return { THREE, renderer, scene, camera, controls, toScene, loadVenue, loadSeats, setCutaway, setFx, setTheme, flyTo, onFrame, setStageMode }
 }

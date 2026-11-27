@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 
 from contracts.schemas import FORECAST_HORIZON_S, FRUIN_F, REPORT_INTERVAL_S, ReadingBatch, RunControl
-from contracts.venue import Venue
+from contracts.venue import Venue, preset_dir
 from testbed.meso import MesoTestbed
 
 SOURCE = "testbed:meso"
@@ -59,7 +59,7 @@ class HttpLink:
 
 
 def run_scenario(cfg: RunControl, link, run_id, venue=None, realtime=False, on_step=None):
-    v = venue or Venue()
+    v = venue or Venue(preset_dir(cfg.layout))           # the stage preset chosen for the run
     tb = MesoTestbed(seed=cfg.seed, p_follow=cfg.p_follow, venue=v)
     walking = [z for z in v.zone_ids if v.is_walking(z)]
     blind = [z for z in v.zone_ids if not v.zones[z]["monitored"]]

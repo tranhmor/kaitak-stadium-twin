@@ -24,7 +24,7 @@ from pymongo import AsyncMongoClient
 from pymongo.errors import DuplicateKeyError
 
 from contracts.schemas import CONTRACT_VERSION, FORECAST_HORIZON_S, FRUIN_F, REPORT_INTERVAL_S, STALE_AFTER_S, Decision, FacilityStatus, ReadingBatch, RunControl
-from contracts.venue import M1_OUT, Venue
+from contracts.venue import DEFAULT_LAYOUT, M1_OUT, Venue, list_presets, preset_dir
 from m2_service.core import Rejected, TwinSession
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,13 +36,22 @@ DIST = ROOT / "m5_dashboard" / "dist"
 
 class Hub:
     def __init__(self):
-        self.venue = Venue()
+        self.venue = Venue()                          # stage preset of the current or last run; the default one at start
+        self.venues = {DEFAULT_LAYOUT: self.venue}
         self.session = None
         self.run = None
         self.proc = None
         self.sockets = set()
         self.latency = []
         self.lock = asyncio.Lock()
+
+    def get_venue(self, layout):
+        """Venue of a built stage preset (m1_venue/out/presets/<id>), loaded once. None if it is not built."""
+        if layout not in self.venues:
+            if layout not in list_presets():
+                return None
+            self.venues[layout] = Venue(preset_dir(layout))
+        return self.venues[layout]
 
     async def publish(self, kind, data):
         msg = json.dumps({"type": kind, "data": data})
@@ -89,17 +98,43 @@ app = FastAPI(title="Kai Tak Stadium Twin · M2", version=CONTRACT_VERSION, life
 
 
 # ---------------------------------------------------------------------------------------- venue (M1)
+def layout_of(v):
+    return v.manifest.get("stage", {}).get("preset_id", DEFAULT_LAYOUT)
+
+
 @app.get("/api/health")
 async def health():
     await db.command("ping")
     return {"ok": True, "contract": CONTRACT_VERSION, "manifest": hub.venue.manifest["manifest_version"],
-            "manifest_status": hub.venue.manifest["status"], "run": hub.run and hub.run["run_id"], "clients": len(hub.sockets)}
+            "manifest_status": hub.venue.manifest["status"], "layout": layout_of(hub.venue),
+            "run": hub.run and hub.run["run_id"], "clients": len(hub.sockets)}
 
 
 @app.get("/api/venue")
-async def venue():
-    return {**hub.venue.manifest, "constants": {"fruin_f": FRUIN_F, "report_interval_s": REPORT_INTERVAL_S,
-                                                 "stale_after_s": STALE_AFTER_S, "forecast_horizon_s": FORECAST_HORIZON_S}}
+async def venue(layout: str | None = None):
+    """Manifest of a stage preset. Without `layout`: the preset of the current or last run. `asset_base` is where its
+    zones, lines, displays and spawn files are served; the mesh and seats are shared by every preset."""
+    v = hub.venue if layout is None else hub.get_venue(layout)
+    if v is None:
+        raise HTTPException(404, f"no stage preset {layout!r}; built: {list_presets()}")
+    lay = layout_of(v)
+    return {**v.manifest, "layout": lay, "asset_base": "/m1" if lay == DEFAULT_LAYOUT else f"/m1/presets/{lay}",
+            "constants": {"fruin_f": FRUIN_F, "report_interval_s": REPORT_INTERVAL_S,
+                          "stale_after_s": STALE_AFTER_S, "forecast_horizon_s": FORECAST_HORIZON_S}}
+
+
+@app.get("/api/layouts")
+async def layouts():
+    """Built stage presets, default first, with what the scenario panel needs to show and preselect."""
+    out = []
+    for lay in list_presets():
+        m = hub.get_venue(lay).manifest
+        st = m.get("stage", {})
+        out.append({"preset_id": lay, "label_en": st.get("label_en", lay), "label_zh": st.get("label_zh", lay),
+                    "mode": st.get("mode", "original"), "status": st.get("status", m["status"]), "capacity": m["scope"]["capacity"],
+                    "closed_seating": sorted(z for z, x in m["zones"].items() if x.get("closed_for_concert")),
+                    "recommended_close_gate": st.get("recommended_close_gate"), "current": lay == layout_of(hub.venue)})
+    return out
 
 
 # ---------------------------------------------------------------------------------------- runs
@@ -116,14 +151,18 @@ async def end_run(status):
 
 @app.post("/api/runs")
 async def start_run(cfg: RunControl):
-    if cfg.close_gate and cfg.close_gate not in hub.venue.gates:
+    v = hub.get_venue(cfg.layout)
+    if v is None:
+        raise HTTPException(422, f"{cfg.layout} is not a built stage preset: {list_presets()}")
+    if cfg.close_gate and cfg.close_gate not in v.gates:
         raise HTTPException(422, f"{cfg.close_gate} is not a gate in the manifest")
     async with hub.lock:
         await end_run("stopped")
         run_id = "run-" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        hub.venue = v
         hub.session = TwinSession(hub.venue, run_id, cfg.approval)
         hub.latency = []
-        hub.run = {"run_id": run_id, "status": "running", "started_at": now(), "ended_at": None, "config": cfg.model_dump(),
+        hub.run = {"run_id": run_id, "status": "running", "started_at": now(), "ended_at": None, "config": cfg.model_dump(), "layout": cfg.layout,
                    "manifest_version": hub.venue.manifest["manifest_version"], "manifest_sha": hub.venue.manifest["source"]["source_sha256"][:16],
                    "contract": CONTRACT_VERSION, "result": None}
         await db.runs.insert_one(dict(hub.run))

@@ -66,16 +66,20 @@ applyThemeChrome()
 applyStaticI18n()
 $('status-text').textContent = T().statusConnecting
 
-const manifest = await json('/api/venue')
+let manifest = await json('/api/venue')                 // stage preset of the current or last run (see switchLayout)
 const LIMIT = manifest.constants.fruin_f
-const [zonesGeo, linesGeo, spawn] = await Promise.all(['zones', 'lines'].map((n) => json(`/m1/${manifest.files[n]}`)).concat(json(`/m1/${manifest.files.spawn}`)))
+// files of a preset are served under its asset_base; the mesh and seats are shared, so their paths climb back to /m1
+const asset = (m, file) => new URL(`${m.asset_base ?? '/m1'}/${file}`, location.href).pathname
+const loadLayer = (m) => Promise.all(['zones', 'lines', 'spawn'].map((n) => json(asset(m, m.files[n]))))
+const [zonesGeo, linesGeo, spawn] = await loadLayer(manifest)
 const view = createScene($('scene'), manifest, theme)
-const overlay = createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang, theme })
+let overlay = createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang, theme })
 
 function renderScope() {
   const s = T()
   const side = manifest.scope.side === 'W' ? s.sideWest : s.sideEast
-  const status = manifest.status === 'provisional' ? s.statusProvisional : manifest.status
+  const status = manifest.stage?.status === 'hypothetical' ? s.statusHypothetical
+    : manifest.status === 'provisional' ? s.statusProvisional : manifest.status
   $('scope-status').textContent = status
   $('scope').innerHTML = [side, s.scopeZones(Object.keys(manifest.zones).length), s.scopePeople(manifest.scope.capacity)]
     .map((item) => `<span>${esc(item)}</span>`)
@@ -85,7 +89,8 @@ function renderScope() {
 renderScope()
 
 $('loading-text').textContent = T().loadingModel
-await Promise.all([view.loadVenue(`/m1/${manifest.files.mesh}`), view.loadSeats(`/m1/${manifest.files.seats}`)])
+await Promise.all([view.loadVenue(asset(manifest, manifest.files.mesh)), view.loadSeats(asset(manifest, manifest.files.seats))])
+view.setStageMode(manifest.stage?.mode ?? 'original')
 $('loading').classList.add('done')
 
 // ------------------------------------------------------------------ views
@@ -115,11 +120,17 @@ const focusZone = (id) => {
 }
 
 // ------------------------------------------------------------------ scenario form
-for (const [id, g] of [['', { ref: '' }], ...Object.entries(manifest.gates)]) {
-  const o = new Option('', id)
-  o.dataset.ref = g.ref
-  o.selected = g.ref === 'D'
-  $('f-gate').append(o)
+function buildGateOptions() {
+  const sel = $('f-gate')
+  sel.innerHTML = ''
+  for (const [id, g] of [['', { ref: '' }], ...Object.entries(manifest.gates)]) {
+    const o = new Option('', id)
+    o.dataset.ref = g.ref
+    // the gate the stage preset recommends closing in the demo (north_end: D); older manifests have no stage block
+    o.selected = manifest.stage ? id === manifest.stage.recommended_close_gate : g.ref === 'D'
+    sel.append(o)
+  }
+  renderGateOptions()
 }
 function renderGateOptions() {
   const s = T()
@@ -127,7 +138,7 @@ function renderGateOptions() {
     o.textContent = o.value ? s.gateClosesAt(o.dataset.ref) : s.gateNoClosure
   }
 }
-renderGateOptions()
+buildGateOptions()
 
 let speedValue = 10
 for (const b of document.querySelectorAll('#f-speed button')) {
@@ -149,6 +160,7 @@ showP()
 let run = null, state = null, truth = null, series = [], guidance = new Map(), logged = new Set(), logs = []
 let wsState = 'connecting' // 'connecting' | 'open' | 'offline'
 let hoveredZone = null
+let layoutBusy = false                    // a stage layout switch is loading (see switchLayout)
 
 // Extension points for the parallel dashboard branches (docs/platform_tasks.md). Each branch registers callbacks
 // in its own section at the end of this file instead of editing onState, onRun, setLang or setTheme.
@@ -162,6 +174,7 @@ $('b-start').onclick = async () => {
   await post('/api/runs', {
     p_follow: +sliderP.value, speed: speedValue, close_gate: $('f-gate').value || null, approval: $('f-approval').value,
     drop_zones: drop ? ['L2-W-C08', 'L2-W-C10'] : [], drop_from_s: drop ? 200 : 0, drop_to_s: drop ? 320 : 0,
+    layout: manifest.layout ?? 'north_end',
   })
 }
 $('b-stop').onclick = () => run && post(`/api/runs/${run.run_id}/stop`)
@@ -206,11 +219,14 @@ function setStatus() {
   } else {
     $('status-text').textContent = run ? s.statusRunEnded(runStatus) : s.statusReady
   }
-  $('b-start').disabled = live
+  $('b-start').disabled = live || layoutBusy
   $('b-stop').disabled = !live
+  $('f-layout').disabled = live || layoutBusy
 }
 
 async function onRun(r, resumed = false) {
+  const want = r.config?.layout ?? 'north_end'
+  if (want !== (manifest.layout ?? 'north_end')) await switchLayout(want, { resetRun: false })   // a run on another stage
   const fresh = !run || run.run_id !== r.run_id
   run = r
   if (fresh) {
@@ -875,7 +891,56 @@ hooks.run.push((r, { fresh, resumed }) => {
   else syncProposalPreview()
 })
 
-window.twin = { view, overlay, manifest, setLang, setTheme, getLang: () => lang, getTheme: () => theme }
+// ------------------------------------------------------------------ stage layout (M1 presets, E2)
+// The stage, its screens and the floor seats are mirrored in 3D; the live layer, capacity and the default gate to close
+// come from the preset's manifest. Only while no run is live; a run started on another preset switches the view itself.
+let layouts = []
+try { layouts = await json('/api/layouts') } catch { layouts = [] }
+$('layout-field').hidden = layouts.length < 2
+
+function renderLayoutOptions() {
+  const s = T(), sel = $('f-layout')
+  // a hypothetical preset is marked by the badge in the brand panel; the option keeps to the preset's name
+  sel.innerHTML = layouts.map((x) => `<option value="${esc(x.preset_id)}">${esc(lang === 'zh' ? x.label_zh : x.label_en)}</option>`).join('')
+  sel.value = manifest.layout ?? 'north_end'
+  $('layout-field').title = s.layoutTip
+}
+
+async function switchLayout(id, { resetRun = true } = {}) {
+  if (!id || id === (manifest.layout ?? 'north_end') || layoutBusy) return
+  layoutBusy = true
+  setStatus()
+  try {
+    const m = await json(`/api/venue?layout=${encodeURIComponent(id)}`)
+    const [z, l, sp] = await loadLayer(m)
+    p2Select(null)
+    clearProposalPreview()
+    overlay.dispose()
+    manifest = m
+    overlay = createOverlay(view, m, z, l, sp, { lang, theme })
+    view.setStageMode(m.stage?.mode ?? 'original')
+    Object.assign(window.twin, { manifest, overlay })
+    if (resetRun) {                       // the last run belongs to the other preset: start from a clean view
+      run = null; state = null; truth = null; series = []; guidance = new Map(); logged = new Set(); logs = []
+      gateInFlight.clear()
+      p2.req += 1; p2.baseRun = null; p2.baseRows = []
+    }
+    buildGateOptions(); renderScope()
+    renderKpis(); renderGates(); renderEval(); renderPending(true); renderLog(); p2Render()
+  } catch (e) {
+    pushLog({ t: state?.t_s ?? 0, kind: 'error', message: e.message, cls: 'rejected' })
+  } finally {
+    layoutBusy = false
+    renderLayoutOptions()
+    setStatus()
+  }
+}
+
+$('f-layout').onchange = (e) => switchLayout(e.target.value)
+hooks.appearance.push(() => renderLayoutOptions())
+renderLayoutOptions()
+
+window.twin = { view, overlay, manifest, setLang, setTheme, switchLayout, getLang: () => lang, getTheme: () => theme }
 window.addEventListener('resize', drawChart)
 
 setStatus(); renderKpis(); renderGates(); renderEval(); renderPending(true); renderLog(); drawChart()

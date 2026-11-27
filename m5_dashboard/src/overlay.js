@@ -130,6 +130,9 @@ function updateSprite(s, text, options) {
 
 export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang: initLang = 'en', theme: initTheme = 'dark' } = {}) {
   const { scene, toScene } = view
+  // every per-frame callback goes through here, so that dispose() can unregister all of them
+  const frameOffs = []
+  const onFrame = (fn) => { frameOffs.push(view.onFrame(fn)) }
   const zones = manifest.zones
   const root = new THREE.Group()
   scene.add(root)
@@ -386,7 +389,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   }
 
   const mat4 = new THREE.Matrix4(), pos = new THREE.Vector3(), scl = new THREE.Vector3()
-  view.onFrame((dt, t) => {
+  onFrame((dt, t) => {
     const pulse = 0.72 + 0.28 * Math.sin(t * 5)
     for (const [id, line] of Object.entries(outline)) {
       const level = line.userData.level
@@ -444,7 +447,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     updateSprite(selectLabel, selected.split('-').slice(2).join('-'), P.gateOpenStyle)
     selectTheme = currentTheme
   })
-  view.onFrame((dt, t) => { if (selectRing) selectRing.material.opacity = 0.7 + 0.3 * Math.sin(t * 3.2) })
+  onFrame((dt, t) => { if (selectRing) selectRing.material.opacity = 0.7 + 0.3 * Math.sin(t * 3.2) })
 
   // ---- P3 proposal preview
   const PREVIEW_THEMES = {
@@ -539,7 +542,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
 
   applyHooks.push(() => applyPreviewStyle())
 
-  view.onFrame((dt, t) => {
+  onFrame((dt, t) => {
     if (!previewDisplays.size) return
     const wave = 0.5 + 0.5 * Math.sin(t * 4.5)
     previewFrameMat.opacity = 0.66 + 0.34 * wave
@@ -595,8 +598,25 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   const getPreview = () => ({ displays: [...previewDisplays.keys()], zones: [...previewZones] })
 
   const centre = (id) => toScene(...zones[id].centroid).toArray()
+  // Removes the live layer from the scene and frees its GPU resources (used when the stage preset changes).
+  function dispose() {
+    for (const off of frameOffs.splice(0)) off?.()
+    scene.remove(root)
+    const done = new Set()
+    root.traverse((o) => {
+      if (o.isInstancedMesh) o.dispose()
+      if (o.geometry && !o.isSprite && !done.has(o.geometry)) { done.add(o.geometry); o.geometry.dispose() }   // sprites share one geometry
+      for (const m of Array.isArray(o.material) ? o.material : o.material ? [o.material] : []) {
+        if (done.has(m)) continue
+        done.add(m)
+        m.map?.dispose()
+        m.dispose()
+      }
+    })
+  }
+
   return {
-    apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f),
+    apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f), dispose,
     // P2
     setSelected, getSelected: () => selected,
 
