@@ -12,7 +12,7 @@ import math
 
 import numpy as np
 
-from contracts.venue import M1_OUT, Venue
+from contracts.venue import Venue
 
 V_FREE = 1.34           # m/s, Weidmann free speed
 RHO_MAX = 5.4
@@ -35,7 +35,7 @@ class MesoTestbed:
         self.gate_share, self.specific_flow, self.jam = assumed["gate_flow_share"], assumed["specific_flow_pps_per_m"], assumed["jam_density_ppm2"]
         self.camera_noise, self.line_detect = camera_noise, line_detect
         v = self.v
-        spawn = json.load(open(M1_OUT / "spawn.json"))["zones"]
+        spawn = json.load(open(v.out_dir / "spawn.json"))["zones"]
         zone, xy = [], []
         for z, pts in spawn.items():
             zone += [v.index[z]] * len(pts)
