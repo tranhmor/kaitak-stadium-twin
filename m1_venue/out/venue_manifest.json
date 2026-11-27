@@ -1,7 +1,7 @@
 {
  "manifest_version": "0.1",
  "status": "provisional",
- "built_at": "2026-11-24T23:43:32+08:00",
+ "built_at": "2026-11-27T19:10:56+08:00",
  "venue": "Kai Tak Main Stadium",
  "scope": {
   "side": "W",
@@ -38,6 +38,10 @@
   "bowl_centre": [
    191.22,
    -195.84
+  ],
+  "pitch_centre": [
+   189.98,
+   -195.19
   ],
   "glb_axes": "glTF +Y up: x = x, y = z, z = -y"
  },
@@ -2518,5 +2522,54 @@
    "ref": "C",
    "osm_id": "n13122941482"
   }
+ },
+ "stage": {
+  "preset_id": "north_end",
+  "mode": "original",
+  "status": "provisional",
+  "label_en": "North-end stage (as in the .blend)",
+  "label_zh": "北端舞台（与 .blend 一致）",
+  "obstacles": [
+   {
+    "kind": "stage_deck",
+    "x": [
+     162.98,
+     216.98
+    ],
+    "y": [
+     -159.69,
+     -136.69
+    ],
+    "z": [
+     1.0,
+     7.0
+    ]
+   },
+   {
+    "kind": "video_wall",
+    "x": [
+     165.98,
+     213.98
+    ],
+    "y": [
+     -138.69,
+     -137.69
+    ],
+    "z": [
+     6.0,
+     22.0
+    ]
+   }
+  ],
+  "sold_seats": "lower-tier seats with y <= -138.69 (in view of the stage)",
+  "gate_load": {
+   "L2-W-G-F": 2013,
+   "L2-W-G-E": 1700,
+   "L2-W-G-D": 742,
+   "L2-W-G-C": 5444
+  },
+  "busiest_gate": "L2-W-G-C",
+  "recommended_close_gate": "L2-W-G-D",
+  "recommended_close_rule": "the gate next to the busiest gate along the concourse; every seated person walks to the nearest gate"
  }
 }

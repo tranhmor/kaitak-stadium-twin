@@ -1,0 +1,386 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "local metres (x east, y north, z up); EPSG:2326 E = x + 838186.926, N = y + 820553.488"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "id": "L2-W-D01",
+   "properties": {
+    "id": "L2-W-D01",
+    "at_line": "L2-W-CL06",
+    "zone": "L2-W-C01",
+    "upstream": "L2-W-P01",
+    "serves": [
+     "L2-W-S01"
+    ],
+    "angle_deg": 94.0
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     182.81,
+     -75.62,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D02",
+   "properties": {
+    "id": "L2-W-D02",
+    "at_line": "L2-W-CL08",
+    "zone": "L2-W-C02",
+    "upstream": "L2-W-P02",
+    "serves": [
+     "L2-W-S02"
+    ],
+    "angle_deg": 105.5
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     159.11,
+     -80.08,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D03",
+   "properties": {
+    "id": "L2-W-D03",
+    "at_line": "L2-W-CL09",
+    "zone": "L2-W-C02",
+    "upstream": "L2-W-P03",
+    "serves": [
+     "L2-W-S03"
+    ],
+    "angle_deg": 116.75
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3,
+     -88.89,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D04",
+   "properties": {
+    "id": "L2-W-D04",
+    "at_line": "L0-W-CL10",
+    "zone": "L2-W-C03",
+    "upstream": "L0-W-T01",
+    "serves": [
+     "L0-W-F01",
+     "L0-W-F02"
+    ],
+    "angle_deg": 122.26
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     127.98,
+     -95.66,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D05",
+   "properties": {
+    "id": "L2-W-D05",
+    "at_line": "L2-W-CL13",
+    "zone": "L2-W-C03",
+    "upstream": "L2-W-P04",
+    "serves": [
+     "L2-W-S04"
+    ],
+    "angle_deg": 128.01
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     119.56,
+     -104.14,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D06",
+   "properties": {
+    "id": "L2-W-D06",
+    "at_line": "L2-W-CL15",
+    "zone": "L2-W-C04",
+    "upstream": "L2-W-P05",
+    "serves": [
+     "L2-W-S05"
+    ],
+    "angle_deg": 139.76
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     106.22,
+     -123.92,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D07",
+   "properties": {
+    "id": "L2-W-D07",
+    "at_line": "L2-W-CL18",
+    "zone": "L2-W-C05",
+    "upstream": "L2-W-P06",
+    "serves": [
+     "L2-W-S06"
+    ],
+    "angle_deg": 152.01
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     98.4,
+     -146.52,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D08",
+   "properties": {
+    "id": "L2-W-D08",
+    "at_line": "L2-W-CL20",
+    "zone": "L2-W-C06",
+    "upstream": "L2-W-P07",
+    "serves": [
+     "L2-W-S07"
+    ],
+    "angle_deg": 164.77
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     96.06,
+     -169.93,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D09",
+   "properties": {
+    "id": "L2-W-D09",
+    "at_line": "L2-W-CL21",
+    "zone": "L2-W-C06",
+    "upstream": "L2-W-P08",
+    "serves": [
+     "L2-W-S08"
+    ],
+    "angle_deg": 177.86
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     96.62,
+     -192.3,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D10",
+   "properties": {
+    "id": "L2-W-D10",
+    "at_line": "L2-W-CL24",
+    "zone": "L2-W-C07",
+    "upstream": "L2-W-P09",
+    "serves": [
+     "L2-W-S09"
+    ],
+    "angle_deg": 191.87
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     97.97,
+     -215.44,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D11",
+   "properties": {
+    "id": "L2-W-D11",
+    "at_line": "L2-W-CL26",
+    "zone": "L2-W-C08",
+    "upstream": "L2-W-P10",
+    "serves": [
+     "L2-W-S10"
+    ],
+    "angle_deg": 205.23
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     100.37,
+     -238.65,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D12",
+   "properties": {
+    "id": "L2-W-D12",
+    "at_line": "L2-W-CL29",
+    "zone": "L2-W-C09",
+    "upstream": "L2-W-P11",
+    "serves": [
+     "L2-W-S11"
+    ],
+    "angle_deg": 217.74
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     106.63,
+     -261.3,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D13",
+   "properties": {
+    "id": "L2-W-D13",
+    "at_line": "L0-W-CL30",
+    "zone": "L2-W-C10",
+    "upstream": "L0-W-T02",
+    "serves": [
+     "L0-W-F03"
+    ],
+    "angle_deg": 235.23
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     124.69,
+     -291.68,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D14",
+   "properties": {
+    "id": "L2-W-D14",
+    "at_line": "L2-W-CL33",
+    "zone": "L2-W-C10",
+    "upstream": "L2-W-P12",
+    "serves": [
+     "L2-W-S12"
+    ],
+    "angle_deg": 229.49
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     117.41,
+     -282.22,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D15",
+   "properties": {
+    "id": "L2-W-D15",
+    "at_line": "L2-W-CL35",
+    "zone": "L2-W-C11",
+    "upstream": "L2-W-P13",
+    "serves": [
+     "L2-W-S13"
+    ],
+    "angle_deg": 240.99
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     133.4,
+     -300.1,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D16",
+   "properties": {
+    "id": "L2-W-D16",
+    "at_line": "L2-W-CL36",
+    "zone": "L2-W-C11",
+    "upstream": "L2-W-P14",
+    "serves": [
+     "L2-W-S14"
+    ],
+    "angle_deg": 252.24
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     153.76,
+     -312.81,
+     15.399999999999999
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "L2-W-D17",
+   "properties": {
+    "id": "L2-W-D17",
+    "at_line": "L2-W-CL37",
+    "zone": "L2-W-C12",
+    "upstream": "L2-W-P15",
+    "serves": [
+     "L2-W-S15"
+    ],
+    "angle_deg": 263.25
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     176.62,
+     -319.1,
+     15.399999999999999
+    ]
+   }
+  }
+ ]
+}

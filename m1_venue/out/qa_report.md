@@ -1,8 +1,8 @@
 # M1 QA report
 
-Built 2026-11-24T23:43:32+08:00 from `Kai_Tak_Peak_Routes.blend` (sha256 `3d59faf2714e873d…`), config v0.1.
+Built 2026-11-27T19:10:56+08:00 from `Kai_Tak_Peak_Routes.blend` (sha256 `3d59faf2714e873d…`), config v0.1.
 
-**13 passed, 0 failed, 14 notes.**
+**14 passed, 0 failed, 14 notes.**
 
 - [PASS] 51 zones with unique IDs: 12 concourse, 3 floor, 4 gate, 15 portal, 15 seating, 2 tunnel
 - [PASS] every zone is one valid polygon with area > 1 m²
@@ -18,6 +18,7 @@ Built 2026-11-24T23:43:32+08:00 from `Kai_Tak_Peak_Routes.blend` (sha256 `3d59fa
 - [PASS] 52 zone boundaries, 34 with a counting line; 17 displays
 - [PASS] 4 zones have no camera and must be estimated by M3: L2-W-C03, L2-W-C06, L2-W-C09, L2-W-C12
 - [PASS] 4 seating zones are behind the stage video wall and closed: L2-W-S01, L2-W-S02, L2-W-S03, L2-W-S04
+- [PASS] stage preset `north_end` (original, provisional); gate load with everyone at the nearest gate: F 2,013, E 1,700, D 742, C 5,444; gate to close in the demo: D, next to the busiest gate C
 - [WARN] assumed `concourse_width_m` = 17.0 (width of the 'East concourse' interior set in the .blend (17 x 55 m))
 - [WARN] assumed `concourse_inset_m` = 0.5 (assumed facade thickness)
 - [WARN] assumed `portal_width_m` = 3.0 (assumed; no vomitories in the .blend)

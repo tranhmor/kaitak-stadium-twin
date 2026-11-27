@@ -28,3 +28,7 @@ assumed:                       # values not present in the .blend; each is liste
   stage_side: {value: north, source: ".blend stage deck at y -160..-137 (roadmap text says south; to confirm)"}
 monitoring:
   unmonitored_concourse_cells: [3, 6, 9, 12]   # 1-based cell numbers without an assumed camera
+default_preset: north_end      # built straight into out/; the other presets go to out/presets/<id>/
+stage_presets:                 # mirror = stage, blocked seats and floor seats mirrored about the centre of the concert floor
+  north_end: {mode: original, status: provisional, label_en: "North-end stage (as in the .blend)", label_zh: "北端舞台（与 .blend 一致）"}
+  south_end: {mode: mirror, status: hypothetical, label_en: "South-end stage (mirrored)", label_zh: "南端舞台（镜像）"}
