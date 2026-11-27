@@ -195,6 +195,22 @@ export const STRINGS = {
     gateRunOnlyTip: 'Start a run to control gates',
 
     // P2 chart, zone inspector and baseline
+    chartModePeak: 'Peak',
+    chartModeOver: (limit) => `Over ${limit}`,
+    chartModeZone: 'Zone',
+    chartModeAria: 'Chart mode',
+    chartTitleOver: (limit) => `Walking zones above ${limit}`,
+    chartSubOver: 'zones',
+    chartTitleZone: (zone) => `Zone ${zone}`,
+    chartZoneHint: 'Click a zone in the 3D view to plot it',
+    chartZoneResumed: (t) => `Zone history starts at ${t} (page reloaded)`,
+    zoneStale: 'camera stale',
+    zoneClear: 'Clear selection (Esc)',
+    baselineLabel: 'Baseline',
+    baselineNone: 'No baseline',
+    baselineTip: 'Latest finished no-guidance run with the same seed, gate closure, closing time, stage layout and camera outage, read from MongoDB',
+    keyBase: 'No-guidance baseline',
+    evalVsBase: 'vs no-guidance baseline',
 
     // P3 proposal preview
   },
@@ -358,6 +374,22 @@ export const STRINGS = {
     gateRunOnlyTip: '运行散场后可控制闸口',
 
     // P2 chart, zone inspector and baseline
+    chartModePeak: '峰值',
+    chartModeOver: (limit) => `超 ${limit}`,
+    chartModeZone: '单区',
+    chartModeAria: '曲线模式',
+    chartTitleOver: (limit) => `超 ${limit} 的通行分区数`,
+    chartSubOver: '个',
+    chartTitleZone: (zone) => `分区 ${zone}`,
+    chartZoneHint: '在 3D 场景中点击一个分区，查看它的曲线',
+    chartZoneResumed: (t) => `页面刷新过，单区曲线从 ${t} 开始`,
+    zoneStale: '摄像头断流',
+    zoneClear: '取消选择（Esc）',
+    baselineLabel: '基线',
+    baselineNone: '无基线',
+    baselineTip: '取 MongoDB 中最近一次已完成的无引导运行，要求种子、关门设置、关门时间、舞台构型和断流设置都相同',
+    keyBase: '无引导基线',
+    evalVsBase: '较无引导基线',
 
     // P3 proposal preview
   },

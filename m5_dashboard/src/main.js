@@ -405,6 +405,10 @@ function renderPending(force = false) {
 function renderEval() {
   const s = T(), r = run?.result, row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`
   let html = ''
+  if (r) {          // once the run has ended its outcome comes first, each with the difference to the baseline (P2)
+    html += row(esc(s.evalT90), clock(r.t90_s ?? 0)) + p2EvalDiff(r, 't90_s')
+    html += row(esc(s.evalOverLim(LIMIT)), r.over_threshold_zone_seconds) + p2EvalDiff(r, 'over_threshold_zone_seconds')
+  }
   if (truth) {
     html += row(esc(s.evalErrNow), `${truth.mean_abs_error.toFixed(2)} / ${truth.max_abs_error.toFixed(2)}`)
     const blind = Object.entries(truth.blind).sort((a, b) => b[1].true - a[1].true)[0]
@@ -414,7 +418,6 @@ function renderEval() {
   if (r) {
     if (r.true_compliance != null) html += row(esc(s.evalCompTrue), `${Math.round(r.true_compliance * 100)}%`)
     html += row(esc(s.evalRunErr), `${r.density_mae.toFixed(3)} / ${r.density_max_error.toFixed(2)}`)
-    html += row(esc(s.evalT90), clock(r.t90_s ?? 0)) + row(esc(s.evalOverLim(LIMIT)), r.over_threshold_zone_seconds)
   }
   if (!html) {
     const idleHtml = row(esc(s.evalErrNow), '— / —')
@@ -434,41 +437,67 @@ function drawChart() {
   const pal = CHART_THEMES[theme]
   g.setTransform(dpr, 0, 0, dpr, 0, 0)
   g.clearRect(0, 0, w, h)
-  const L = 26, B = 16, Tpad = 4, R = 6, tMax = Math.max(600, (series.at(-1)?.t ?? 0) * 1.05), yMax = 4.4
+  // Three modes (P2 section): peak = highest walking-zone density, with the testbed truth; over = walking zones above
+  // the limit; zone = the zone picked in the 3D view. Peak and over can carry the no-guidance baseline.
+  const mode = p2Mode(), zone = p2.zone
+  const now = mode === 'over' ? (p) => p.over : mode === 'zone' ? (p) => p.z?.[zone]?.[0] : (p) => p.now
+  const fc = mode === 'over' ? (p) => p.overFc : mode === 'zone' ? (p) => p.z?.[zone]?.[1] : (p) => p.fc
+  const baseRows = p2.showBase && mode !== 'zone' ? p2.baseRows : []
+  const L = 26, B = 16, Tpad = 4, R = 6, tMax = Math.max(600, (series.at(-1)?.t ?? 0) * 1.05)
+  let yMax = 4.4, ticks = [0, 1, 2, 3, 4]
+  if (mode === 'over') {                    // whole zones: four equal steps cover the largest count
+    let top = 4
+    for (const p of series) top = Math.max(top, now(p) ?? 0, fc(p) ?? 0)
+    for (const p of baseRows) if (p.t <= tMax) top = Math.max(top, now(p) ?? 0)
+    const k = Math.ceil(top / 4)
+    ticks = [0, k, 2 * k, 3 * k, 4 * k]
+    yMax = 4.4 * k
+  }
   const X = (t) => L + ((w - L - R) * t) / tMax, Y = (v) => Tpad + (h - Tpad - B) * (1 - Math.min(v, yMax) / yMax)
   g.font = '10px system-ui'; g.fillStyle = pal.axis; g.strokeStyle = pal.grid; g.lineWidth = 1; g.setLineDash([])
-  for (const v of [0, 1, 2, 3, 4]) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(w - R, Y(v)); g.stroke(); g.fillText(v, 8, Y(v) + 3) }
+  for (const v of ticks) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(w - R, Y(v)); g.stroke(); g.fillText(v, 8, Y(v) + 3) }
   const step = tMax > 1500 ? 300 : 120
-  for (let t = 0; t <= tMax; t += step) g.fillText(clock(t), X(t) - 8, h - 3)
-  g.strokeStyle = pal.limit; g.beginPath(); g.moveTo(L, Y(LIMIT)); g.lineTo(w - R, Y(LIMIT)); g.stroke()
+  for (let t = 0; t <= tMax; t += step) {
+    const label = clock(t)
+    g.fillText(label, Math.min(X(t) - 8, w - 1 - g.measureText(label).width), h - 3)     // the last label stays whole
+  }
+  if (mode !== 'over') { g.strokeStyle = pal.limit; g.beginPath(); g.moveTo(L, Y(LIMIT)); g.lineTo(w - R, Y(LIMIT)); g.stroke() }
   const mark = (t, colour) => { g.strokeStyle = colour; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(X(t), Tpad); g.lineTo(X(t), h - B); g.stroke(); g.setLineDash([]) }
   if (run?.config.close_gate && (series.at(-1)?.t ?? 0) >= run.config.close_at_s) mark(run.config.close_at_s, pal.closed)
   for (const x of guidance.values()) if (x.status === 'approved') mark(x.decided_t_s, pal.approved)
-  const path = (key, colour, dash, shift = 0) => {
+  const path = (rows, get, colour, dash, shift = 0) => {
     g.strokeStyle = colour; g.setLineDash(dash); g.lineWidth = 1.6; g.beginPath()
     let started = false
-    for (const p of series) {
-      if (p[key] == null) continue
-      const x = X(p.t + shift), y = Y(p[key])
+    for (const p of rows) {
+      const v = get(p)
+      if (v == null) continue
+      if (rows === baseRows && p.t > tMax) break
+      const x = X(p.t + shift), y = Y(v)
       started ? g.lineTo(x, y) : g.moveTo(x, y)
       started = true
     }
     g.stroke(); g.setLineDash([])
   }
-  if (!series.length) {
+  const note = (text, y) => {
     g.save()
     g.font = '11px Inter, "PingFang SC", system-ui, sans-serif'
     g.fillStyle = pal.axis
     g.globalAlpha = 0.78
     g.textAlign = 'center'
     g.textBaseline = 'middle'
-    g.fillText(T().chartEmpty, L + (w - L - R) / 2, (Y(LIMIT) + Y(0)) / 2)
+    g.fillText(text, L + (w - L - R) / 2, y)
     g.restore()
-    return
   }
-  path('fc', pal.fc, [5, 4], manifest.constants.forecast_horizon_s)   // drawn at the time it refers to
-  path('now', pal.now, [])
-  path('truth', pal.truth, [1.5, 4])
+  if (!series.length) { note(T().chartEmpty, (Y(LIMIT) + Y(0)) / 2); return }
+  if (mode === 'zone') {                    // a reloaded page has no zone history before the reload
+    const first = series.find((p) => p.z)
+    if (!first) { note(T().chartZoneResumed(clock(series.at(-1).t)), (Y(LIMIT) + Y(0)) / 2); return }
+    if (first !== series[0]) note(T().chartZoneResumed(clock(first.t)), Tpad + 9)
+  }
+  if (baseRows.length) path(baseRows, now, P2_BASE[theme], [6, 4])
+  path(series, fc, pal.fc, [5, 4], manifest.constants.forecast_horizon_s)   // drawn at the time it refers to
+  path(series, now, pal.now, [])
+  if (mode === 'peak') path(series, (p) => p.truth, pal.truth, [1.5, 4])
 }
 
 // ------------------------------------------------------------------ hover
@@ -659,6 +688,149 @@ $('gates').addEventListener('click', async (e) => {
 })
 
 // ------------------------------------------------------------------ P2 chart, zone inspector and baseline
+// Click a zone in the 3D view to plot it. The chart switches between the peak walking-zone density, the number of
+// walking zones above the limit and the picked zone. A guided run is compared with the latest finished no-guidance
+// run of the same scenario stored in MongoDB: a grey dashed line in the chart, two difference rows in the evaluation.
+const P2_BASE = { dark: '#8a9bb3', light: '#7b8ba3' }      // baseline line; same colour as --p2-base in style.css
+const p2 = { mode: 'peak', zone: null, baseRun: null, baseRows: [], showBase: true, req: 0 }
+const p2Mode = () => (p2.mode === 'zone' && !p2.zone ? 'peak' : p2.mode)
+const p2KeyBase = Object.assign(document.createElement('span'), { className: 'k base', hidden: true })
+document.querySelector('.panel.chart .key').append(p2KeyBase)
+
+function p2Select(id) {
+  p2.zone = id
+  overlay.setSelected(id)
+  if (id) p2.mode = 'zone'
+  else if (p2.mode === 'zone') p2.mode = 'peak'
+  p2Render()
+}
+
+function p2Render() {
+  const s = T(), mode = p2Mode(), hasBase = p2.baseRows.length > 0
+  const group = $('p2-mode')
+  group.setAttribute('aria-label', s.chartModeAria)
+  for (const b of group.querySelectorAll('button')) {
+    const m = b.dataset.mode
+    b.textContent = m === 'peak' ? s.chartModePeak : m === 'over' ? s.chartModeOver(LIMIT) : s.chartModeZone
+    b.classList.toggle('active', m === mode)
+    b.setAttribute('aria-pressed', String(m === mode))
+  }
+  const zoneButton = group.querySelector('[data-mode="zone"]')
+  zoneButton.disabled = !p2.zone
+  zoneButton.title = p2.zone ? '' : s.chartZoneHint
+  const wrap = $('p2-base-wrap'), box = $('p2-base')
+  wrap.classList.toggle('off', !hasBase)
+  wrap.title = s.baselineTip
+  box.disabled = !hasBase
+  box.checked = hasBase && p2.showBase
+  $('p2-base-label').textContent = hasBase ? s.baselineLabel : s.baselineNone
+  const head = document.querySelector('.panel.chart .sec-head h2')
+  head.querySelector('[data-i18n="chartTitle"]').textContent =
+    mode === 'over' ? s.chartTitleOver(LIMIT) : mode === 'zone' ? s.chartTitleZone(short(p2.zone)) : s.chartTitle
+  head.querySelector('[data-i18n="chartSub"]').textContent = mode === 'over' ? s.chartSubOver : s.chartSub
+  const key = document.querySelector('.panel.chart .key')
+  key.querySelector('.k.truth').hidden = mode !== 'peak'
+  key.querySelector('.k.lim').hidden = mode === 'over'
+  p2KeyBase.hidden = !(hasBase && p2.showBase && mode !== 'zone')
+  p2KeyBase.textContent = s.keyBase
+  p2RenderZone()
+  drawChart()
+}
+
+function p2RenderZone() {
+  const chip = $('p2-zone')
+  chip.hidden = !p2.zone
+  if (!p2.zone) return
+  const s = T(), z = manifest.zones[p2.zone], now = state?.zones[p2.zone]
+  $('p2-zone-id').textContent = short(p2.zone)
+  $('p2-zone-basis').textContent = now?.stale ? s.zoneStale : z.monitored ? s.tipHasCam : s.tipNoCam
+  $('p2-zone-clear').title = s.zoneClear
+  $('p2-zone-clear').setAttribute('aria-label', s.zoneClear)
+}
+
+// Same scenario = same seed, gate closure, closing time, stage layout and camera outage. Compliance p and speed do not
+// matter: without guidance nobody is redirected, and the testbed draws the same random numbers whatever p is.
+function p2Scenario(c) {
+  const drop = [...(c.drop_zones ?? [])].sort()
+  return JSON.stringify([c.seed ?? 1, c.close_gate ?? null, c.close_at_s ?? 120, c.layout ?? 'north_end', drop,
+    drop.length ? [c.drop_from_s, c.drop_to_s] : null])
+}
+
+async function p2LoadBaseline(r) {
+  const req = ++p2.req
+  p2.baseRun = null
+  p2.baseRows = []
+  p2Render()
+  if (r.config.approval === 'none') return                  // this run is a baseline itself
+  try {
+    const want = p2Scenario(r.config)
+    const base = (await json('/api/runs?limit=100')).find((x) => x.run_id !== r.run_id && x.status === 'completed' && x.result
+      && x.config?.approval === 'none' && p2Scenario(x.config) === want)
+    if (!base) return
+    const rows = await json(`/api/runs/${base.run_id}/series`)
+    if (req !== p2.req) return                               // a newer run started meanwhile
+    p2.baseRun = base
+    p2.baseRows = rows.map((x) => ({ t: x.t_s, now: x.max_density, over: x.zones_over_now }))
+  } catch {
+    return                                                   // no baseline; the switch says so
+  }
+  p2Render()
+  renderEval()
+}
+
+// One evaluation row under a result of a finished guided run: its difference to the baseline, green when lower.
+function p2EvalDiff(r, key) {
+  const b = p2.baseRun?.result
+  if (!r?.completed || r[key] == null || b?.[key] == null || run?.config.approval === 'none') return ''
+  const d = r[key] - b[key], sign = d > 0 ? '+' : d < 0 ? '−' : ''
+  const value = key === 't90_s' ? clock(Math.abs(d)) : fmtNum(Math.abs(d))
+  const pct = b[key] ? ` (${sign}${Math.abs(Math.round((100 * d) / b[key]))}%)` : ''
+  return `<dt class="p2-diff">${esc(T().evalVsBase)}</dt>`
+    + `<dd class="p2-diff ${d < 0 ? 'p2-better' : d > 0 ? 'p2-worse' : ''}">${sign}${value}${pct}</dd>`
+}
+
+$('p2-mode').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-mode]')
+  if (!b || b.disabled) return
+  p2.mode = b.dataset.mode
+  p2Render()
+})
+$('p2-base').addEventListener('change', (e) => { p2.showBase = e.target.checked; p2Render() })
+$('p2-zone-clear').addEventListener('click', () => p2Select(null))
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && p2.zone) p2Select(null) })
+
+// A click picks a zone (again: clears it); a drag only moves the camera.
+const p2Press = { x: 0, y: 0, down: false }
+$('scene').addEventListener('pointerdown', (e) => { if (e.button === 0) Object.assign(p2Press, { x: e.clientX, y: e.clientY, down: true }) })
+$('scene').addEventListener('pointerup', (e) => {
+  if (!p2Press.down || e.button !== 0) return
+  p2Press.down = false
+  if (Math.hypot(e.clientX - p2Press.x, e.clientY - p2Press.y) >= 5) return
+  const id = overlay.pick(e.clientX, e.clientY)
+  p2Select(id && id !== p2.zone ? id : null)
+})
+
+// Every zone's history stays in the browser, one row per state (about 250 KB per run).
+hooks.state.push((s) => {
+  const row = series.at(-1)
+  row.over = s.kpis.zones_over_now
+  row.overFc = s.kpis.zones_over_forecast
+  row.z = {}
+  for (const [id, v] of Object.entries(s.zones)) row.z[id] = [v.density, v.forecast_density]
+  if (p2.zone) p2RenderZone()
+})
+hooks.run.push(async (r, { fresh, resumed }) => {
+  if (fresh && resumed) {            // rows restored from MongoDB carry the peak only: add the counts over the limit
+    try {
+      const over = new Map((await json(`/api/runs/${r.run_id}/series`)).map((x) => [x.t_s, x.zones_over_now]))
+      for (const p of series) if (p.over == null && over.has(p.t)) p.over = over.get(p.t)
+    } catch { /* the over-limit curve then starts at the reload */ }
+  }
+  if (fresh) p2LoadBaseline(r)
+  else p2Render()
+})
+hooks.appearance.push(() => p2Render())
+p2Render()
 
 // ------------------------------------------------------------------ P3 proposal preview
 

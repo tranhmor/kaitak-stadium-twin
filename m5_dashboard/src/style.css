@@ -290,5 +290,25 @@ button.on { border-color: var(--accent); color: var(--accent); }
 .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* P2 chart, zone inspector and baseline */
+:root { --p2-base: #8a9bb3; }
+:root[data-theme="light"] { --p2-base: #7b8ba3; }
+.p2-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.p2-mode button { height: 20px; min-width: 0; padding: 0 8px; font-size: 11px; white-space: nowrap; }
+.p2-mode button:disabled { opacity: 0.38; cursor: default; }
+.p2-base { display: inline-flex; align-items: center; gap: 5px; color: var(--dim); font-size: 11px; white-space: nowrap; cursor: pointer; user-select: none; }
+.p2-base input { margin: 0; accent-color: var(--accent); cursor: inherit; }
+.p2-base.off { opacity: 0.6; cursor: default; }
+.p2-zone { display: inline-flex; align-items: center; gap: 6px; height: 20px; padding: 0 2px 0 8px; border-radius: 999px; background: var(--badge-bg); border: 1px solid var(--badge-border); color: var(--badge-text); font-size: 11px; white-space: nowrap; }
+.p2-zone[hidden] { display: none; }
+.p2-zone b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.p2-zone span { color: var(--dim); }
+.p2-zone button { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--dim); font-size: 13px; line-height: 1; }
+.p2-zone button:hover { color: var(--text); background: var(--seg-bg); }
+.k.base::before { border-color: var(--p2-base); border-top-style: dashed; }
+#eval dt.p2-diff { padding-left: 10px; }
+#eval dd.p2-better { color: var(--ok); }
+#eval dd.p2-worse { color: var(--alert); }
+/* the chart and evaluation panels keep the row height; longer content scrolls inside instead of pushing the bottom row off screen */
+#bottom .panel.chart, #bottom .panel.eval { min-height: 0; }
 
 /* P3 proposal preview */

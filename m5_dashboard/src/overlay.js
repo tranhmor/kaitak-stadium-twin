@@ -419,6 +419,32 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   }
 
   // ---- P2 chart, zone inspector and baseline
+  // A zone picked by a click keeps its own ring and label: `focus` follows the pointer on every move.
+  const SELECT_RING = { dark: new THREE.Color('#ffffff'), light: new THREE.Color('#0b2545') }
+  let selected = null, selectRing = null, selectLabel = null, selectTheme = null
+  function setSelected(id) {
+    if (selectRing) { root.remove(selectRing); selectRing.material.dispose(); selectRing = null }      // geometry is the outline's
+    if (selectLabel) { root.remove(selectLabel); selectLabel.material.map?.dispose(); selectLabel.material.dispose(); selectLabel = null }
+    selected = id && outline[id] ? id : null
+    if (!selected) return
+    selectRing = new Line2(outline[selected].geometry,
+      new LineMaterial({ color: SELECT_RING[currentTheme], linewidth: 4.5, transparent: true, depthWrite: false }))
+    selectRing.position.y = 0.12
+    selectRing.renderOrder = 7
+    root.add(selectRing)
+    const [x, y, h] = zones[selected].centroid
+    selectLabel = sprite(selected.split('-').slice(2).join('-'), 3.4, P.gateOpenStyle)
+    selectLabel.position.copy(toScene(x, y, h + 7))
+    root.add(selectLabel)
+    selectTheme = currentTheme
+  }
+  applyHooks.push(() => {
+    if (!selected || selectTheme === currentTheme) return
+    selectRing.material.color.copy(SELECT_RING[currentTheme])
+    updateSprite(selectLabel, selected.split('-').slice(2).join('-'), P.gateOpenStyle)
+    selectTheme = currentTheme
+  })
+  view.onFrame((dt, t) => { if (selectRing) selectRing.material.opacity = 0.7 + 0.3 * Math.sin(t * 3.2) })
 
   // ---- P3 proposal preview
 
@@ -426,6 +452,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   return {
     apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f),
     // P2
+    setSelected, getSelected: () => selected,
 
     // P3
 
