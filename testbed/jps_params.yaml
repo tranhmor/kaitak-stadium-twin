@@ -1,0 +1,23 @@
+# JuPedSim testbed parameters (execution plan v0.2, sections 2.2.1 and 2.3).
+# The testbed (testbed/jps.py) and the verification suite (verification/) both read this file,
+# so the model that is verified is the model that is run.
+#
+# Frozen before verification. Changing any value below means redoing the gate calibration (2.3.2)
+# and the TN 1822 suite (2.3.3). Only gate_clear_width_m is calibrated; everything else stays at
+# the JuPedSim 1.4.2 documented defaults.
+jupedsim_version: "1.4.2"
+model: CollisionFreeSpeedModel
+model_params:                       # JuPedSim defaults, written out so a library upgrade cannot change them silently
+  strength_neighbor_repulsion: 8.0
+  range_neighbor_repulsion: 0.1
+  strength_geometry_repulsion: 5.0
+  range_geometry_repulsion: 0.02
+time_gap_s: 1.0
+radius_m: 0.2
+dt_s: 0.05
+v_free_mps: 1.34                    # Weidmann free speed; desired speed = v_free_mps * personal factor (same as meso.py and M3)
+row_speed_mps: 0.6                  # inside the origin seating zone; desired speed = row_speed_mps * personal factor
+door_offset_m: 1.5                  # door piers sit this far outside the gate line
+door_thickness_m: 0.5
+gate_clear_width_m: null            # filled by the gate calibration (2.3.2)
+calibration: null                   # filled with {date, flow_pps, target_pps: 4.16, rig, dt_s, jupedsim_version}

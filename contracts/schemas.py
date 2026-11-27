@@ -1,13 +1,14 @@
-"""Interface contract v0.1 between the testbed, M2, M3, M4 and M5.
+"""Interface contract v0.2 between the testbed, M2, M3, M4 and M5.
 
 All IDs come from m1_venue/out/venue_manifest.json. Times: `t_s` is seconds since the start of the run
 (simulated clock), `ts` is the matching ISO 8601 timestamp with offset. Counts are people; density is persons/m².
+v0.2 only adds RunControl fields with defaults (testbed, layout, record_trajectory, scale); v0.1 callers are unchanged.
 """
 from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-CONTRACT_VERSION = "0.1"
+CONTRACT_VERSION = "0.2"
 REPORT_INTERVAL_S = 5.0
 STALE_AFTER_S = 10.0
 FRUIN_F = 2.2          # persons/m², roadmap v7.5 trigger
@@ -117,3 +118,7 @@ class RunControl(BaseModel):
     drop_to_s: float = 0.0
     launch: bool = True                            # M2 starts the testbed process itself
     label: str = ""
+    testbed: Literal["meso", "jupedsim"] = "meso"
+    layout: str = "north_end"                      # stage preset: m1_venue/out, or m1_venue/out/presets/<id>
+    record_trajectory: bool = False                # jupedsim only
+    scale: float = Field(1.0, gt=0, le=1)          # testbed smoke tests only; the twin still assumes a full house, not for evaluation

@@ -5,13 +5,26 @@ import math
 from pathlib import Path
 
 M1_OUT = Path(__file__).resolve().parent.parent / "m1_venue" / "out"
+DEFAULT_LAYOUT = "north_end"                                   # stage preset built straight into m1_venue/out
 TWO_WAY = {("concourse", "concourse"), ("floor", "floor")}     # every other boundary is walked from -> to only
 WALKING = ("portal", "concourse", "gate", "tunnel")            # zone types judged against the Fruin F threshold
+
+
+def preset_dir(layout=DEFAULT_LAYOUT):
+    """M1 output folder for a stage preset. The default preset lives in m1_venue/out, the others in out/presets/<id>."""
+    return M1_OUT if layout == DEFAULT_LAYOUT else M1_OUT / "presets" / layout
+
+
+def list_presets():
+    """Stage presets that have been built, default first."""
+    built = sorted(p.name for p in (M1_OUT / "presets").glob("*") if (p / "venue_manifest.json").is_file())
+    return [DEFAULT_LAYOUT] + [p for p in built if p != DEFAULT_LAYOUT]
 
 
 class Venue:
     def __init__(self, out_dir=M1_OUT):
         out_dir = Path(out_dir)
+        self.out_dir = out_dir
         self.manifest = json.load(open(out_dir / "venue_manifest.json"))
         graph = json.load(open(out_dir / "graph.json"))
         self.zones = self.manifest["zones"]

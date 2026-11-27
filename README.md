@@ -29,7 +29,7 @@ open http://127.0.0.1:8010/
 | 目录 | 内容 |
 | --- | --- |
 | `m1_venue/` | `export_blend.py`（Blender 导出几何，只读 `.blend`）、`build_layout.py`（生成分区、计数线、显示屏、图、可步行面和 QA 报告）、`config.yaml`（范围和假设值）、`out/`（产物） |
-| `contracts/` | `schemas.py` 数据契约 v0.1，`venue.py` 各模块共用的 M1 读取器 |
+| `contracts/` | `schemas.py` 数据契约 v0.2，`venue.py` 各模块共用的 M1 读取器 |
 | `m2_service/` | FastAPI + MongoDB + WebSocket；`core.py` 把 M3、M4 串成一个会话，服务和离线实验共用 |
 | `m3_state/` | 分区人数估计（流量守恒 + 逐区修正）和 2 分钟预测 |
 | `m4_guidance/` | 引导提案、审批、遵从率估计 |

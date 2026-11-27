@@ -1,0 +1,11 @@
+# JuPedSim testbed, TN 1822 verification and PedPy analysis (Python 3.12). The M2 service does not need these.
+#
+#   uv venv --python 3.12 .venv312
+#   uv pip install --python .venv312/bin/python -r requirements.txt
+#   uv pip install --python .venv312/bin/python --no-deps jupedsim==1.4.2
+#   uv pip install --python .venv312/bin/python -r requirements-testbed.txt
+#
+# jupedsim is installed with --no-deps: its wheel pulls PySide6 and VTK, which only its visualiser uses.
+# Its runtime imports (numpy, shapely) are already in requirements.txt.
+deprecated~=1.2.18
+pedpy==1.5.1
