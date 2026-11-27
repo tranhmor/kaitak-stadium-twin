@@ -144,7 +144,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   let P = OVERLAY_THEMES[currentTheme]
 
   // ---- zone surfaces and outlines
-  const surface = {}, outline = {}, pickable = [], samples = {}
+  const surface = {}, outline = {}, pickable = [], samples = {}, gateDecks = []
   const deckMaterial = new THREE.MeshStandardMaterial({ color: P.deck, roughness: 0.85 })
   for (const f of zonesGeo.features) {
     const id = f.id, z = zones[id], ring = f.geometry.coordinates[0].slice(0, -1)
@@ -172,6 +172,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
       deck.position.copy(toScene(0, 0, ring[0][2] - 1.12))
       deck.receiveShadow = deck.castShadow = true
       root.add(deck)
+      if (z.type === 'gate') gateDecks.push(deck)
     }
 
     const flat = []
@@ -247,22 +248,26 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     closed.visible = false
     gateLabel[id] = { ref: g.ref, open, closed }
   }
-  const boards = {}
+  const boards = {}, boardPickable = []
   const boardGeo = new THREE.BoxGeometry(2.6, 1.1, 0.25)
   for (const [id, d] of Object.entries(manifest.displays)) {
     const mesh = new THREE.Mesh(boardGeo, new THREE.MeshBasicMaterial({ color: P.boardIdle }))
     mesh.position.copy(toScene(d.xyz[0], d.xyz[1], d.xyz[2]))
     mesh.rotation.y = THREE.MathUtils.degToRad(d.angle_deg) + Math.PI / 2
+    mesh.userData.display = id
     root.add(mesh)
     boards[id] = { mesh, sprites: {}, shown: null }
+    boardPickable.push(mesh)
   }
   const boardSprite = (id, gateId) => {
     const b = boards[id]
     if (!b.sprites[gateId]) {
       const s = sprite(`→ ${manifest.gates[gateId].ref}`, 2.6, P.boardStyle)
       s.position.copy(b.mesh.position).y += 2.6
+      s.userData.display = id
       root.add(s)
       b.sprites[gateId] = s
+      boardPickable.push(s)
     }
     return b.sprites[gateId]
   }
@@ -419,6 +424,16 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
     const hit = ray.intersectObjects(pickable, false)[0]
     focus = hit ? hit.object.userData.zone : null
     return focus
+  }
+  function pickDisplay(clientX, clientY) {
+    ndc.set((clientX / window.innerWidth) * 2 - 1, -(clientY / window.innerHeight) * 2 + 1)
+    ray.setFromCamera(ndc, view.camera)
+    const visibleBoards = boardPickable.filter((o) => o.visible)
+    const hit = ray.intersectObjects(visibleBoards, false)[0]
+    return hit ? hit.object.userData.display : null
+  }
+  function setShellVisible(visible) {
+    for (const d of gateDecks) d.visible = !visible
   }
 
   // ---- P2 chart, zone inspector and baseline
@@ -616,7 +631,7 @@ export function createOverlay(view, manifest, zonesGeo, linesGeo, spawn, { lang:
   }
 
   return {
-    apply, reset, pick, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f), dispose,
+    apply, reset, pick, pickDisplay, setShellVisible, centre, setFocus: (id) => { focus = id }, setAppearance, onApply: (f) => applyHooks.push(f), dispose,
     // P2
     setSelected, getSelected: () => selected,
 
