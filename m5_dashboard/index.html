@@ -42,8 +42,8 @@
 
     <div id="top-right">
       <div class="seg mode-seg" id="mode-switch" role="group" aria-label="Workspace mode">
-        <button type="button" data-mode="ops" class="active" data-i18n="modeOps">Ops</button>
-        <button type="button" data-mode="sim" data-i18n="modeSim">Testbed</button>
+        <button type="button" data-mode="ops" class="active" data-i18n="modeOps" data-tip-key="tipModeOps">Ops</button>
+        <button type="button" data-mode="sim" data-i18n="modeSim" data-tip-key="tipModeSim">Testbed</button>
       </div>
       <div class="toolbar" id="toolbar" role="group" aria-label="Display controls">
         <div class="seg" id="lang-switch" role="group" aria-label="Language">
@@ -68,50 +68,46 @@
     </div>
   </header>
 
-  <!-- Left floating spatial rail: Operations intelligence in Ops mode; External Testbed injector in Sim mode -->
+  <!-- Left floating spatial rail: Venue status in Ops mode; External Testbed controls in Sim mode -->
   <div id="left-dock">
     <aside id="left" class="panel">
       <div class="rail-head">
         <div class="rail-title-wrap">
-          <span class="mode-pill ops-only" data-i18n="opsPill">Live Twin</span>
-          <span class="mode-pill sim-only" data-i18n="simPill">External Testbed</span>
-          <button type="button" class="info-btn sim-only" data-tip-key="tipScenario" aria-label="Info">i</button>
+          <h2 class="ops-only" data-i18n="opsRailTitle">Venue</h2>
+          <h2 class="sim-only" data-i18n="simRailTitle">Testbed</h2>
           <button type="button" class="info-btn ops-only" data-tip-key="tipOpsRail" aria-label="Info">i</button>
+          <button type="button" class="info-btn sim-only" data-tip-key="tipScenario" aria-label="Info">i</button>
         </div>
-        <button type="button" class="icon-btn" id="b-collapse-left" aria-label="Toggle left panel" title="Collapse">
+        <button type="button" class="icon-btn" id="b-collapse-left" aria-label="Collapse panel" title="Collapse">
           <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M10 3L5 8l5 5"></path>
           </svg>
         </button>
       </div>
 
-      <!-- Shared Venue Configuration (M1 stage preset — real venue setup) -->
+      <!-- Shared Venue Configuration (M1 stage preset) -->
       <div class="field layout-box" id="layout-field" hidden>
         <span class="field-label" data-i18n="layoutLabel">Stage layout</span>
         <div class="select-wrap"><select id="f-layout"></select></div>
       </div>
 
-      <!-- Operations Mode Content (no simulator controls) -->
+      <!-- Operations Mode Content: compact, zero filler copy -->
       <div class="ops-only" id="ops-pane">
-        <div class="feed-card" id="feed-card"></div>
-
-        <div class="sec-head section-sep">
-          <h2 data-i18n="hotspotsTitle">Congestion Hotspots</h2>
+        <div class="sec-head">
+          <h2 data-i18n="hotspotsTitle">Hotspots</h2>
           <small data-i18n="hotspotsSub">click to inspect</small>
         </div>
         <div id="hotspots"></div>
 
         <div class="sec-head section-sep">
-          <h2 data-i18n="distTitle">Crowd Distribution</h2>
+          <h2 data-i18n="distTitle">Crowd in venue</h2>
           <small id="dist-total"></small>
         </div>
         <div id="crowd-dist"></div>
       </div>
 
-      <!-- Simulation / Testbed Mode Content (explicitly isolated external testbed controls) -->
+      <!-- Simulation / Testbed Mode Content: concise injector controls -->
       <div class="sim-only" id="sim-pane">
-        <div class="sim-banner" data-i18n="simBanner">Drives /api/readings with synthetic sensor counts. Twin algorithms never read testbed truth.</div>
-
         <div class="field">
           <span class="field-label" data-i18n="gateClosedLabel">Gate closure</span>
           <div class="select-wrap"><select id="f-gate"></select></div>
@@ -153,7 +149,6 @@
           <button id="b-start" class="primary" data-i18n="btnStart">Start egress</button>
           <button id="b-stop" disabled data-i18n="btnStop">Stop</button>
         </div>
-        <button type="button" class="ghost-link" id="b-to-ops" data-i18n="btnReturnOps">Switch to live Ops view →</button>
       </div>
     </aside>
 
@@ -188,23 +183,38 @@
     </div>
   </div>
 
-  <!-- Right Decision & Audit Rail (Log stays pinned and visible even during large proposals) -->
-  <aside id="right" class="panel">
-    <div class="right-top">
-      <div class="sec-head">
-        <h2 data-i18n="guidanceTitle">Guidance</h2>
-        <button type="button" class="info-btn" data-tip-key="tipGuidance" aria-label="Info">i</button>
+  <!-- Right Decision & Audit Rail (content-sized; never stretches empty!) -->
+  <div id="right-dock">
+    <aside id="right" class="panel">
+      <div class="right-top">
+        <div class="sec-head">
+          <div class="rail-title-wrap">
+            <h2 data-i18n="guidanceTitle">Guidance</h2>
+            <button type="button" class="info-btn" data-tip-key="tipGuidance" aria-label="Info">i</button>
+          </div>
+          <button type="button" class="icon-btn" id="b-collapse-right" aria-label="Collapse panel" title="Collapse">
+            <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 3l5 5-5 5"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="pending"></div>
       </div>
-      <div id="pending"></div>
-    </div>
-    <div class="right-log">
-      <div class="sec-head section-sep">
-        <h2 data-i18n="logTitle">Log</h2>
-        <small id="log-count"></small>
+      <div class="right-log" id="right-log">
+        <div class="sec-head section-sep">
+          <h2 data-i18n="logTitle">Log</h2>
+          <small id="log-count"></small>
+        </div>
+        <ol id="log"></ol>
       </div>
-      <ol id="log"></ol>
-    </div>
-  </aside>
+    </aside>
+
+    <button type="button" class="expand-tab" id="b-expand-right" hidden aria-label="Expand right panel" title="Expand">
+      <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 3L5 8l5 5"></path>
+      </svg>
+    </button>
+  </div>
 
   <!-- Unified Bottom Analytics & Operations Dock -->
   <footer id="bottom">

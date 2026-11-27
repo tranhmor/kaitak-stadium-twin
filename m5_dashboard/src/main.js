@@ -82,6 +82,10 @@ function applyStaticI18n() {
   $('b-collapse-left')?.setAttribute('aria-label', s.collapseLeft)
   $('b-expand-left')?.setAttribute('title', s.expandLeft)
   $('b-expand-left')?.setAttribute('aria-label', s.expandLeft)
+  $('b-collapse-right')?.setAttribute('title', s.collapseLeft)
+  $('b-collapse-right')?.setAttribute('aria-label', s.collapseLeft)
+  $('b-expand-right')?.setAttribute('title', s.expandLeft)
+  $('b-expand-right')?.setAttribute('aria-label', s.expandLeft)
   const lightBtn = document.querySelector('#theme-switch button[data-theme="light"]')
   const darkBtn = document.querySelector('#theme-switch button[data-theme="dark"]')
   if (lightBtn) { lightBtn.title = s.themeLightTitle; lightBtn.setAttribute('aria-label', s.themeLightTitle) }
@@ -180,6 +184,14 @@ $('b-expand-left').onclick = () => {
   $('left-dock').classList.remove('collapsed')
   $('b-expand-left').hidden = true
 }
+$('b-collapse-right').onclick = () => {
+  $('right-dock').classList.add('collapsed')
+  $('b-expand-right').hidden = false
+}
+$('b-expand-right').onclick = () => {
+  $('right-dock').classList.remove('collapsed')
+  $('b-expand-right').hidden = true
+}
 
 const focusZone = (id) => {
   const [x, y, z] = overlay.centre(id)
@@ -242,7 +254,6 @@ $('b-start').onclick = async () => {
   })
 }
 $('b-stop').onclick = () => run && post(`/api/runs/${run.run_id}/stop`)
-$('b-to-ops').onclick = () => setMode('ops')
 
 // ------------------------------------------------------------------ live channel
 function connect() {
@@ -464,51 +475,35 @@ function hotspotColor(d, fc) {
 
 function renderOpsRail() {
   const s = T()
-  const live = run?.status === 'running'
-  const feedEl = $('feed-card')
-  if (feedEl) {
-    feedEl.className = `feed-card${live ? ' live' : ''}`
-    if (live) {
-      const tag = run.config?.launch ? s.feedLiveProxy(run.config.speed ?? 10) : s.feedLiveExternal
-      feedEl.innerHTML = `<div class="feed-top"><span class="feed-title"><i></i>${esc(s.feedLiveTitle)}</span><span class="feed-tag">${esc(tag)}</span></div>`
-    } else if (run) {
-      const st = s.runStatusMap[run.status] ?? run.status
-      feedEl.innerHTML = `<div class="feed-top"><span class="feed-title"><i></i>${esc(s.feedEndedTitle(st))}</span></div>
-        <div class="feed-desc">${esc(s.feedEndedDesc)}</div>
-        <button type="button" class="feed-cta" data-open-sim="1">${esc(s.btnOpenSim)}</button>`
-    } else {
-      feedEl.innerHTML = `<div class="feed-top"><span class="feed-title"><i></i>${esc(s.feedIdleTitle)}</span></div>
-        <div class="feed-desc">${esc(s.feedIdleDesc)}</div>
-        <button type="button" class="feed-cta" data-open-sim="1">${esc(s.btnOpenSim)}</button>`
-    }
-  }
-
-  // Hotspots Top 5
+  // Hotspots Top 5 (clickable to locate & lock Zone chart; idle shows key walking zones at 0.0)
   const hsEl = $('hotspots')
   if (hsEl) {
+    let ranked
     if (!state) {
-      hsEl.innerHTML = `<div class="hs-empty">${esc(s.hotspotsIdle)}</div>`
+      const defaults = ['L0-W-T02', 'L2-W-C10', 'L2-W-C09', 'L2-W-C05'].filter((id) => manifest.zones[id])
+      const fallback = defaults.length ? defaults : Object.keys(manifest.zones).filter((id) => WALKING_TYPES.has(manifest.zones[id]?.type)).slice(0, 4)
+      ranked = fallback.map((id) => ({ id, d: 0, fc: 0, score: 0 }))
     } else {
-      const ranked = Object.entries(state.zones)
+      ranked = Object.entries(state.zones)
         .filter(([id]) => WALKING_TYPES.has(manifest.zones[id]?.type))
         .map(([id, z]) => ({ id, d: z.density, fc: z.forecast_density, score: Math.max(z.density, z.forecast_density) }))
         .filter((x) => x.score >= 0.05)
         .sort((a, b) => b.score - a.score)
         .slice(0, 5)
-      if (!ranked.length) {
-        hsEl.innerHTML = `<div class="hs-empty">${esc(s.hotspotsNone)}</div>`
-      } else {
-        hsEl.innerHTML = ranked.map((x) => {
-          const pct = Math.min(100, (x.score / 4.0) * 100)
-          const cls = x.d > LIMIT ? 'alert' : x.fc > LIMIT ? 'warn' : ''
-          const sel = p2.zone === x.id ? ' selected' : ''
-          return `<button type="button" class="hs-row${sel}" data-zone="${esc(x.id)}">
-            <span class="hs-id">${esc(short(x.id))}</span>
-            <span class="hs-bar"><i style="width:${pct}%;background:${hotspotColor(x.d, x.fc)}"></i></span>
-            <span class="hs-val ${cls}"><b>${x.d.toFixed(1)}</b> → ${x.fc.toFixed(1)}</span>
-          </button>`
-        }).join('')
-      }
+    }
+    if (!ranked.length) {
+      hsEl.innerHTML = `<div class="hs-empty">${esc(s.hotspotsNone)}</div>`
+    } else {
+      hsEl.innerHTML = ranked.map((x) => {
+        const pct = Math.min(100, (x.score / 4.0) * 100)
+        const cls = x.d > LIMIT ? 'alert' : x.fc > LIMIT ? 'warn' : ''
+        const sel = p2.zone === x.id ? ' selected' : ''
+        return `<button type="button" class="hs-row${sel}" data-zone="${esc(x.id)}">
+          <span class="hs-id">${esc(short(x.id))}</span>
+          <span class="hs-bar"><i style="width:${pct}%;background:${hotspotColor(x.d, x.fc)}"></i></span>
+          <span class="hs-val ${cls}"><b>${x.d.toFixed(1)}</b> → ${x.fc.toFixed(1)}</span>
+        </button>`
+      }).join('')
     }
   }
 
@@ -543,10 +538,6 @@ function renderOpsRail() {
     </div>
   `
 }
-
-$('feed-card').addEventListener('click', (e) => {
-  if (e.target.closest('[data-open-sim]')) setMode('sim')
-})
 
 $('hotspots').addEventListener('click', (e) => {
   const row = e.target.closest('button.hs-row[data-zone]')
@@ -595,9 +586,24 @@ function renderPending(force = false) {
   const g = [...guidance.values()].find((x) => x.status === 'proposed' && x.id === state?.pending_guidance)
   const box = $('pending')
   if (!g) {
-    if (force || box.dataset.id !== '') {
-      box.dataset.id = ''
-      box.innerHTML = `<div class="empty">${esc(run?.config.approval === 'none' ? s.guidanceOff : s.guidanceEmpty)}</div>`
+    box.dataset.id = ''
+    const redir = state?.redirected ?? []
+    if (redir.length) {
+      const chips = redir.map((did) => {
+        const gid = state.displays?.[did]
+        const ref = gid ? manifest.gates[gid]?.ref ?? '?' : '?'
+        const wrong = gid && state.facilities?.[gid] === 'closed'
+        const targetZone = manifest.displays[did]?.zone ?? ''
+        return `<button type="button" class="div-chip${wrong ? ' wrong' : ''}" data-loc-zone="${esc(targetZone)}">${esc(short(did))}<b>→${esc(ref)}</b></button>`
+      }).join('')
+      box.innerHTML = `<div class="active-div"><div class="active-div-head"><i></i>${esc(s.guidanceActiveHead(redir.length))}</div><div class="active-div-chips">${chips}</div></div>`
+    } else if (run?.config.approval === 'none') {
+      box.innerHTML = `<div class="guid-bar"><i></i><span>${esc(s.guidanceOff)}</span></div>`
+    } else if (run?.status === 'running' && state) {
+      const fc = state.kpis.max_forecast_density
+      box.innerHTML = `<div class="guid-bar ${fc > LIMIT ? 'warn' : 'monitoring'}"><i></i><span>${esc(s.guidanceMonitoring(fc.toFixed(1)))}</span></div>`
+    } else {
+      box.innerHTML = `<div class="guid-bar"><i></i><span>${esc(s.guidanceStandby)}</span></div>`
     }
     clearProposalPreview()
     return
@@ -1244,6 +1250,10 @@ function clearProposalPreview() {
 
 $('pending').addEventListener('change', (e) => {
   if (e.target.matches('input[data-display]')) syncProposalPreview()
+})
+$('pending').addEventListener('click', (e) => {
+  const chip = e.target.closest('button.div-chip[data-loc-zone]')
+  if (chip && manifest.zones[chip.dataset.locZone]) focusZone(chip.dataset.locZone)
 })
 
 hooks.run.push((r, { fresh, resumed }) => {
